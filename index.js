@@ -15,7 +15,7 @@ function CFGFactory(node) {
   this._blockStack = createBlockStack()
   this._blockStack.pushState(node)
   this._pushFrame(this._visit, node)
-
+  this._connectionKind = []
   this._nodes = []
   this._edges = []
 }
@@ -39,6 +39,23 @@ proto.last = function() {
   return this._lastNode
 }
 
+// connection modes
+proto._setIfTrue = function() {
+  this._connectionKind.push('if-true')
+}
+
+proto._setIfFalse = function() {
+  this._connectionKind.push('if-false')
+}
+
+proto._setException = function() {
+  this._connectionKind.push('exception')
+}
+
+proto.setNormal = function() {
+  this._connectionKind.push('normal')
+}
+
 proto._connect = function(from, to) {
   // something something something
   // edges will encode:
@@ -46,9 +63,10 @@ proto._connect = function(from, to) {
   //  * conditional flow
   //  * exceptional flow
   this._edges.push({
+    kind: this._connectionKind.pop() || 'normal',
     value: this._valueStack.info(),
     from: from,
-    to: to
+    to: to,
   })
   // load "x" from "y"
   // create "x"
@@ -57,7 +75,7 @@ proto._connect = function(from, to) {
 }
 
 proto._pushFrame = function(fn, context) {
-  this._stack.push(new Frame(fn, context, this._blockStack.current()))
+  this._stack.push(new Frame(fn, context))
 }
 
 proto._pushBlock = function cfg_pushBlock(node) {
@@ -110,6 +128,7 @@ proto._visit = function cfg_visit(node) {
     case 'Literal': return this._pushFrame(this.visitLiteral, node)
     case 'BinaryExpression': return this._pushFrame(this.visitBinaryExpression, node)
     case 'SequenceExpression': return this._pushFrame(this.visitSequenceExpression, node)
+    case 'IfStatement': return this._pushFrame(this.visitIfStatement, node)
   }
 }
 
@@ -117,10 +136,9 @@ proto._hoist = function cfg_hoist(node) {
 
 }
 
-function Frame(fn, context, block) {
+function Frame(fn, context) {
   this.fn = fn
   this.context = context
-  this.block = block
 }
 
 require('./lib/visit-stmt-block.js')(proto)
@@ -129,10 +147,10 @@ require('./lib/visit-stmt-expr.js')(proto)
 require('./lib/visit-expr-literal.js')(proto)
 require('./lib/visit-expr-binary.js')(proto)
 require('./lib/visit-expr-sequence.js')(proto)
+require('./lib/visit-stmt-conditional.js')(proto)
 
 if(false) {
 require('./lib/visit-stmt-function.js')(proto)
-require('./lib/visit-stmt-conditional.js')(proto)
 require('./lib/visit-stmt-for-of.js')(proto)
 require('./lib/visit-stmt-for-in.js')(proto)
 require('./lib/visit-stmt-for.js')(proto)
