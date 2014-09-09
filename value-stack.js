@@ -24,7 +24,7 @@ proto.pop = function () {
   return this._values.pop()
 }
 
-proto.info = function () {
+proto.current = function () {
   var last = this._values[this._values.length - 1]
   return last
 }

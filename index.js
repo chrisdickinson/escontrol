@@ -64,7 +64,7 @@ proto._connect = function(from, to) {
   //  * exceptional flow
   this._edges.push({
     kind: this._connectionKind.pop() || 'normal',
-    value: this._valueStack.info(),
+    value: this._valueStack.current(),
     from: from,
     to: to,
   })
@@ -99,7 +99,7 @@ proto._pushValue = function cfg_pushValue(value, isStatic) {
   this._valueStack.push(value, isStatic)
   this._connect(this.last(), {
     operation: 'literal',
-    value: this._valueStack.info()
+    value: this._valueStack.current()
   })
 }
 
@@ -129,6 +129,7 @@ proto._visit = function cfg_visit(node) {
     case 'BinaryExpression': return this._pushFrame(this.visitBinaryExpression, node)
     case 'SequenceExpression': return this._pushFrame(this.visitSequenceExpression, node)
     case 'IfStatement': return this._pushFrame(this.visitIfStatement, node)
+    case 'LogicalExpression': return this._pushFrame(this.visitLogicalExpression, node)
   }
 }
 
@@ -148,6 +149,7 @@ require('./lib/visit-expr-literal.js')(proto)
 require('./lib/visit-expr-binary.js')(proto)
 require('./lib/visit-expr-sequence.js')(proto)
 require('./lib/visit-stmt-conditional.js')(proto)
+require('./lib/visit-expr-logical.js')(proto)
 
 if(false) {
 require('./lib/visit-stmt-function.js')(proto)
@@ -171,7 +173,6 @@ if(false) {
 require('./lib/visit-expr-new.js')(proto)
 require('./lib/visit-expr-call.js')(proto)
 require('./lib/visit-expr-assignment.js')(proto)
-require('./lib/visit-expr-logical.js')(proto)
 require('./lib/visit-expr-member.js')(proto)
 require('./lib/visit-expr-array.js')(proto)
 require('./lib/visit-expr-object.js')(proto)
