@@ -130,6 +130,7 @@ proto._visit = function cfg_visit(node) {
     case 'SequenceExpression': return this._pushFrame(this.visitSequenceExpression, node)
     case 'IfStatement': return this._pushFrame(this.visitIfStatement, node)
     case 'LogicalExpression': return this._pushFrame(this.visitLogicalExpression, node)
+    case 'ForStatement': return this._pushFrame(this.visitForStatement, node)
   }
 }
 
@@ -150,12 +151,12 @@ require('./lib/visit-expr-binary.js')(proto)
 require('./lib/visit-expr-sequence.js')(proto)
 require('./lib/visit-stmt-conditional.js')(proto)
 require('./lib/visit-expr-logical.js')(proto)
+require('./lib/visit-stmt-for.js')(proto)
 
 if(false) {
 require('./lib/visit-stmt-function.js')(proto)
 require('./lib/visit-stmt-for-of.js')(proto)
 require('./lib/visit-stmt-for-in.js')(proto)
-require('./lib/visit-stmt-for.js')(proto)
 require('./lib/visit-stmt-try.js')(proto)
 require('./lib/visit-stmt-while.js')(proto)
 require('./lib/visit-stmt-do-while.js')(proto)
