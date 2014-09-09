@@ -81,7 +81,7 @@ proto._pushValue = function cfg_pushValue(value, isStatic) {
   this._valueStack.push(value, isStatic)
   this._connect(this.last(), {
     operation: 'literal',
-    value: value//this._valueStack.info()
+    value: this._valueStack.info()
   })
 }
 
@@ -90,6 +90,14 @@ proto._popValue = function() {
 
   // XXX: what do nodes look like?
   return {operation: '(pop)'}
+}
+
+proto._createUnreachable = function() {
+  return {operation: '(unreachable)'}
+}
+
+proto._setLastNode = function(node) {
+  this._lastNode = node
 }
 
 proto._visit = function cfg_visit(node) {
@@ -107,21 +115,6 @@ proto._visit = function cfg_visit(node) {
 
 proto._hoist = function cfg_hoist(node) {
 
-}
-
-proto._unwindUntil = function cfg_unwindUntil(block) {
-  for(var i = this._stack.length - 1; i > -1; --i) {
-    if (this._stack.block === block) break
-  }
-  for(; i > -1; --i) {
-    if (this._stack.block !== block) break
-  }
-
-  while (this._blockStack.current() !== block) {
-    this._blockStack.pop()
-  }
-  this._blockStack.pop()
-  this._stack.splice(i, this._stack.length - i)
 }
 
 function Frame(fn, context, block) {
