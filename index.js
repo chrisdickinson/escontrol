@@ -110,7 +110,7 @@ proto._popValue = function() {
   var val = this._valueStack.pop()
 
   // XXX: what do nodes look like?
-  return {operation: '(pop)'}
+  return {operation: '(pop ' + val.staticValue + ')'}
 }
 
 proto._createUnreachable = function() {
@@ -142,6 +142,7 @@ proto._visit = function cfg_visit(node) {
     case 'DoWhileStatement': return this._pushFrame(this.visitDoWhileStatement, node)
     case 'BreakStatement': return this._pushFrame(this.visitBreakStatement, node)
     case 'ContinueStatement': return this._pushFrame(this.visitContinueStatement, node)
+    case 'SwitchStatement': return this._pushFrame(this.visitSwitchStatement, node)
   }
 }
 
@@ -167,6 +168,7 @@ require('./lib/visit-stmt-while.js')(proto)
 require('./lib/visit-stmt-do-while.js')(proto)
 require('./lib/visit-stmt-break.js')(proto)
 require('./lib/visit-stmt-continue.js')(proto)
+require('./lib/visit-stmt-switch.js')(proto)
 
 if(false) {
 require('./lib/visit-stmt-function.js')(proto)
@@ -177,7 +179,6 @@ require('./lib/visit-stmt-with.js')(proto)
 require('./lib/visit-stmt-return.js')(proto)
 require('./lib/visit-stmt-throw.js')(proto)
 require('./lib/visit-stmt-switch-case.js')(proto)
-require('./lib/visit-stmt-switch.js')(proto)
 require('./lib/visit-stmt-var-declaration.js')(proto)
 }
 
