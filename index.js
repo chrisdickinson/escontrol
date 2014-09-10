@@ -13,11 +13,13 @@ function CFGFactory(node) {
   this._lastNode = null
   this._valueStack = createValueStack()
   this._blockStack = createBlockStack()
-  this._blockStack.pushState(node)
+  this._blockStack.pushState(node, [])
   this._pushFrame(this._visit, node)
   this._connectionKind = []
   this._nodes = []
   this._edges = []
+
+  this._labels = []
 }
 
 var cons = CFGFactory
@@ -79,7 +81,8 @@ proto._pushFrame = function(fn, context) {
 }
 
 proto._pushBlock = function cfg_pushBlock(node) {
-  this._blockStack.pushState(node)
+  this._blockStack.pushState(node, this._labels)
+  this._labels.length = 0
 
   var current = this._blockStack.current()
 
@@ -121,7 +124,11 @@ proto._setLastNode = function(node) {
 proto._visit = function cfg_visit(node) {
   switch(node.type) {
     case 'EmptyStatement': return
+    case 'LabeledStatement':
+      this._labels.push(node.label.name)
+      this._visit(node.body)
 
+    return
     case 'Program': return this._pushFrame(this.visitProgram, node)
     case 'BlockStatement': return this._pushFrame(this.visitBlock, node)
     case 'ExpressionStatement': return this._pushFrame(this.visitExpressionStatement, node)
@@ -131,6 +138,10 @@ proto._visit = function cfg_visit(node) {
     case 'IfStatement': return this._pushFrame(this.visitIfStatement, node)
     case 'LogicalExpression': return this._pushFrame(this.visitLogicalExpression, node)
     case 'ForStatement': return this._pushFrame(this.visitForStatement, node)
+    case 'WhileStatement': return this._pushFrame(this.visitWhileStatement, node)
+    case 'DoWhileStatement': return this._pushFrame(this.visitDoWhileStatement, node)
+    case 'BreakStatement': return this._pushFrame(this.visitBreakStatement, node)
+    case 'ContinueStatement': return this._pushFrame(this.visitContinueStatement, node)
   }
 }
 
@@ -152,19 +163,19 @@ require('./lib/visit-expr-sequence.js')(proto)
 require('./lib/visit-stmt-conditional.js')(proto)
 require('./lib/visit-expr-logical.js')(proto)
 require('./lib/visit-stmt-for.js')(proto)
+require('./lib/visit-stmt-while.js')(proto)
+require('./lib/visit-stmt-do-while.js')(proto)
+require('./lib/visit-stmt-break.js')(proto)
+require('./lib/visit-stmt-continue.js')(proto)
 
 if(false) {
 require('./lib/visit-stmt-function.js')(proto)
 require('./lib/visit-stmt-for-of.js')(proto)
 require('./lib/visit-stmt-for-in.js')(proto)
 require('./lib/visit-stmt-try.js')(proto)
-require('./lib/visit-stmt-while.js')(proto)
-require('./lib/visit-stmt-do-while.js')(proto)
 require('./lib/visit-stmt-with.js')(proto)
 require('./lib/visit-stmt-return.js')(proto)
-require('./lib/visit-stmt-break.js')(proto)
 require('./lib/visit-stmt-throw.js')(proto)
-require('./lib/visit-stmt-continue.js')(proto)
 require('./lib/visit-stmt-switch-case.js')(proto)
 require('./lib/visit-stmt-switch.js')(proto)
 require('./lib/visit-stmt-var-declaration.js')(proto)
