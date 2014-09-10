@@ -14,8 +14,8 @@ proto.current = function () {
   return this._block
 }
 
-proto.pushState = function (node) {
-  this._block = new Block(this._block, node)
+proto.pushState = function (node, labels) {
+  this._block = new Block(this._block, node, labels)
 }
 
 proto.pop = function () {
@@ -26,10 +26,10 @@ proto.pop = function () {
   return last
 }
 
-function Block(parent, astNode) {
+function Block(parent, astNode, labels) {
   this.type = astNode.type
   this._parent = parent
-  this.label = ''
+  this.labels = labels.slice()
 
   this.enter = {type: 'enter ' + astNode.type}
   this.exit = {type: 'exit ' + astNode.type}
