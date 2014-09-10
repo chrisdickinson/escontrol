@@ -28,3 +28,22 @@ proto.current = function () {
   var last = this._values[this._values.length - 1]
   return last
 }
+
+proto.toArray = function() {
+  var values = this._values.slice()
+
+  this._values.length = 0
+  var isStatic = true
+  var staticValue = new Array(values.length)
+
+  for(var i = 0, len = values.length; i < len; ++i) {
+    if ((values[i].type & typeOf.STATIC) === 0) {
+      isStatic = false
+      break
+    }
+
+    staticValue[i] = values[i].staticValue
+  }
+
+  this.push(staticValue, isStatic)
+}

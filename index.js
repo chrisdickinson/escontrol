@@ -113,6 +113,11 @@ proto._popValue = function() {
   return {operation: '(pop ' + val.staticValue + ')'}
 }
 
+proto._createArrayNode = function() {
+  this._valueStack.toArray()
+  return {operation: '(array)'}
+}
+
 proto._createUnreachable = function() {
   return {operation: '(unreachable)'}
 }
@@ -143,6 +148,7 @@ proto._visit = function cfg_visit(node) {
     case 'BreakStatement': return this._pushFrame(this.visitBreakStatement, node)
     case 'ContinueStatement': return this._pushFrame(this.visitContinueStatement, node)
     case 'SwitchStatement': return this._pushFrame(this.visitSwitchStatement, node)
+    case 'ArrayExpression': return this._pushFrame(this.visitArrayExpression, node)
   }
 }
 
@@ -170,15 +176,20 @@ require('./lib/visit-stmt-break.js')(proto)
 require('./lib/visit-stmt-continue.js')(proto)
 require('./lib/visit-stmt-switch.js')(proto)
 
+require('./lib/visit-expr-array.js')(proto)
+//require('./lib/visit-expr-object.js')(proto)
+//require('./lib/visit-expr-unary.js')(proto)
+//require('./lib/visit-stmt-return.js')(proto)
+//require('./lib/visit-stmt-throw.js')(proto)
+
+
+
 if(false) {
 require('./lib/visit-stmt-function.js')(proto)
 require('./lib/visit-stmt-for-of.js')(proto)
 require('./lib/visit-stmt-for-in.js')(proto)
 require('./lib/visit-stmt-try.js')(proto)
 require('./lib/visit-stmt-with.js')(proto)
-require('./lib/visit-stmt-return.js')(proto)
-require('./lib/visit-stmt-throw.js')(proto)
-require('./lib/visit-stmt-switch-case.js')(proto)
 require('./lib/visit-stmt-var-declaration.js')(proto)
 }
 
@@ -187,11 +198,7 @@ require('./lib/visit-expr-new.js')(proto)
 require('./lib/visit-expr-call.js')(proto)
 require('./lib/visit-expr-assignment.js')(proto)
 require('./lib/visit-expr-member.js')(proto)
-require('./lib/visit-expr-array.js')(proto)
-require('./lib/visit-expr-object.js')(proto)
-require('./lib/visit-expr-unary.js')(proto)
 require('./lib/visit-expr-identifier.js')(proto)
 require('./lib/visit-expr-update.js')(proto)
 require('./lib/visit-expr-this.js')(proto)
-require('./lib/visit-expr-empty.js')(proto)
 }
