@@ -149,6 +149,7 @@ proto._visit = function cfg_visit(node) {
     case 'ContinueStatement': return this._pushFrame(this.visitContinueStatement, node)
     case 'SwitchStatement': return this._pushFrame(this.visitSwitchStatement, node)
     case 'ArrayExpression': return this._pushFrame(this.visitArrayExpression, node)
+    case 'UnaryExpression': return this._pushFrame(this.visitUnaryExpression, node)
   }
 }
 
@@ -177,8 +178,8 @@ require('./lib/visit-stmt-continue.js')(proto)
 require('./lib/visit-stmt-switch.js')(proto)
 
 require('./lib/visit-expr-array.js')(proto)
+require('./lib/visit-expr-unary.js')(proto)
 //require('./lib/visit-expr-object.js')(proto)
-//require('./lib/visit-expr-unary.js')(proto)
 //require('./lib/visit-stmt-return.js')(proto)
 //require('./lib/visit-stmt-throw.js')(proto)
 

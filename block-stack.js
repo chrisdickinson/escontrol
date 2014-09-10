@@ -14,8 +14,10 @@ proto.current = function () {
   return this._block
 }
 
-proto.pushState = function (node, labels) {
-  this._block = new Block(this._block, node, labels)
+proto.pushState = function (node, labels, hasException) {
+  this._block = new Block(this._block, node, labels, hasException ? {
+    type: 'exception'
+  } : null)
 }
 
 proto.pop = function () {
@@ -26,14 +28,14 @@ proto.pop = function () {
   return last
 }
 
-function Block(parent, astNode, labels) {
+function Block(parent, astNode, labels, exc) {
   this.type = astNode.type
   this._parent = parent
   this.labels = labels.slice()
 
   this.enter = {type: 'enter ' + astNode.type}
   this.exit = {type: 'exit ' + astNode.type}
-  this.exception = {type: 'exc ' + astNode.type}
+  this.exception = exc || null
 }
 
 var cons = Block
