@@ -13,7 +13,7 @@ function CFGFactory(node) {
   this._lastNode = null
   this._valueStack = createValueStack()
   this._blockStack = createBlockStack()
-  this._blockStack.pushState(node, [])
+  this._blockStack.pushState(node, [], true)
   this._pushFrame(this._visit, node)
   this._connectionKind = []
   this._nodes = []
@@ -80,8 +80,8 @@ proto._pushFrame = function(fn, context) {
   this._stack.push(new Frame(fn, context))
 }
 
-proto._pushBlock = function cfg_pushBlock(node) {
-  this._blockStack.pushState(node, this._labels)
+proto._pushBlock = function cfg_pushBlock(node, hasException) {
+  this._blockStack.pushState(node, this._labels, hasException)
   this._labels.length = 0
 
   var current = this._blockStack.current()
@@ -151,6 +151,7 @@ proto._visit = function cfg_visit(node) {
     case 'ArrayExpression': return this._pushFrame(this.visitArrayExpression, node)
     case 'UnaryExpression': return this._pushFrame(this.visitUnaryExpression, node)
     case 'ReturnStatement': return this._pushFrame(this.visitReturnStatement, node)
+    case 'ThrowStatement': return this._pushFrame(this.visitThrowStatement, node)
   }
 }
 
@@ -181,8 +182,8 @@ require('./lib/visit-stmt-switch.js')(proto)
 require('./lib/visit-expr-array.js')(proto)
 require('./lib/visit-expr-unary.js')(proto)
 require('./lib/visit-stmt-return.js')(proto)
+require('./lib/visit-stmt-throw.js')(proto)
 //require('./lib/visit-expr-object.js')(proto)
-//require('./lib/visit-stmt-throw.js')(proto)
 
 
 
