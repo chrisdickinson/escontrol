@@ -178,14 +178,10 @@ require('./lib/visit-stmt-do-while.js')(proto)
 require('./lib/visit-stmt-break.js')(proto)
 require('./lib/visit-stmt-continue.js')(proto)
 require('./lib/visit-stmt-switch.js')(proto)
-
 require('./lib/visit-expr-array.js')(proto)
 require('./lib/visit-expr-unary.js')(proto)
 require('./lib/visit-stmt-return.js')(proto)
 require('./lib/visit-stmt-throw.js')(proto)
-//require('./lib/visit-expr-object.js')(proto)
-
-
 
 if(false) {
 require('./lib/visit-stmt-function.js')(proto)
@@ -197,6 +193,7 @@ require('./lib/visit-stmt-var-declaration.js')(proto)
 }
 
 if(false) {
+require('./lib/visit-expr-object.js')(proto)
 require('./lib/visit-expr-new.js')(proto)
 require('./lib/visit-expr-call.js')(proto)
 require('./lib/visit-expr-assignment.js')(proto)
