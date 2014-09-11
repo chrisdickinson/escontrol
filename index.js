@@ -2,6 +2,7 @@ module.exports = CFGFactory
 
 var createBlockStack = require('./block-stack.js')
 var createValueStack = require('./value-stack.js')
+var createScopeStack = require('./scope-stack.js')
 
 function CFGFactory(node) {
   if (!(this instanceof CFGFactory)) {
@@ -13,13 +14,15 @@ function CFGFactory(node) {
   this._lastNode = null
   this._valueStack = createValueStack()
   this._blockStack = createBlockStack()
-  this._blockStack.pushState(node, [], true)
-  this._pushFrame(this._visit, node)
+  this._scopeStack = createScopeStack()
   this._connectionKind = []
   this._nodes = []
   this._edges = []
-
   this._labels = []
+
+  this._blockStack.pushState(node, [], true)
+  this._scopeStack.push()
+  this._pushFrame(this._visit, node)
 }
 
 var cons = CFGFactory
