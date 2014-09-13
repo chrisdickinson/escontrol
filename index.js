@@ -101,10 +101,11 @@ proto._popBlock = function() {
   return this._blockStack.pop()
 }
 
-proto._pushValue = function cfg_pushValue(value, isStatic) {
+proto._pushValue = function cfg_pushValue(value, isStatic, fromName) {
   this._valueStack.push(value, isStatic)
   this._connect(this.last(), {
-    operation: 'literal',
+    operation: fromName ? 'load' : 'literal',
+    name: fromName ? fromName : null,
     value: this._valueStack.current()
   })
 }
@@ -129,6 +130,28 @@ proto._setLastNode = function(node) {
   this._lastNode = node
 }
 
+proto._throwException = function(typeName) {
+  var oldLast = this.last()
+  var current = this._blockStack.current()
+
+  while (current) {
+    if (current.exception) {
+      break
+    }
+
+    current = current.parent()
+  }
+
+  if (!current) {
+    throw new Error('ran out of blocks!')
+  }
+
+  this._setException()
+  this._connect(oldLast, current.exception)
+  this._setLastNode(oldLast)
+
+}
+
 proto._visit = function cfg_visit(node) {
   switch(node.type) {
     case 'EmptyStatement': return
@@ -141,6 +164,7 @@ proto._visit = function cfg_visit(node) {
     case 'BlockStatement': return this._pushFrame(this.visitBlock, node)
     case 'ExpressionStatement': return this._pushFrame(this.visitExpressionStatement, node)
     case 'Literal': return this._pushFrame(this.visitLiteral, node)
+    case 'Identifier': return this._pushFrame(this.visitIdentifier, node)
     case 'BinaryExpression': return this._pushFrame(this.visitBinaryExpression, node)
     case 'SequenceExpression': return this._pushFrame(this.visitSequenceExpression, node)
     case 'IfStatement': return this._pushFrame(this.visitIfStatement, node)
@@ -159,6 +183,10 @@ proto._visit = function cfg_visit(node) {
 }
 
 proto._hoist = function cfg_hoist(node) {
+
+}
+
+proto._assumeDefined = function(name) {
 
 }
 
@@ -185,6 +213,7 @@ require('./lib/visit-expr-array.js')(proto)
 require('./lib/visit-expr-unary.js')(proto)
 require('./lib/visit-stmt-return.js')(proto)
 require('./lib/visit-stmt-throw.js')(proto)
+require('./lib/visit-expr-identifier.js')(proto)
 
 if(false) {
 require('./lib/visit-stmt-function.js')(proto)
@@ -201,7 +230,6 @@ require('./lib/visit-expr-new.js')(proto)
 require('./lib/visit-expr-call.js')(proto)
 require('./lib/visit-expr-assignment.js')(proto)
 require('./lib/visit-expr-member.js')(proto)
-require('./lib/visit-expr-identifier.js')(proto)
 require('./lib/visit-expr-update.js')(proto)
 require('./lib/visit-expr-this.js')(proto)
 }
