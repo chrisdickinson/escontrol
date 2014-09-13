@@ -4,6 +4,8 @@ var createBlockStack = require('./block-stack.js')
 var createValueStack = require('./value-stack.js')
 var createScopeStack = require('./scope-stack.js')
 
+var estraverse = require('estraverse')
+
 function CFGFactory(node) {
   if (!(this instanceof CFGFactory)) {
     return new CFGFactory(node)
@@ -21,7 +23,7 @@ function CFGFactory(node) {
   this._labels = []
 
   this._blockStack.pushState(node, [], true)
-  this._scopeStack.push()
+  this._scopeStack.push(this._blockStack.current())
   this._pushFrame(this._visit, node)
 }
 
@@ -182,8 +184,36 @@ proto._visit = function cfg_visit(node) {
   }
 }
 
-proto._hoist = function cfg_hoist(node) {
+var FUNCTIONS = {
+    'FunctionDeclaration': true
+  , 'FunctionExpression': true
+  , 'ArrowExpression': true
+}
 
+proto._hoist = function cfg_hoist(node) {
+  var self = this
+
+  estraverse.traverse(node, {enter: enter})
+
+  function enter(node, parent) {
+    if (node.type === 'VariableDeclaration') {
+      self._hoistVariableDeclaration(node)
+    } else if (node.type === 'FunctionDeclaration') {
+      self._hoistFunctionDeclaration(node)
+    } else if (FUNCTIONS[node.type] && node !== inputNode) {
+      this.skip()
+    }
+  }
+}
+
+proto._hoistFunctionDeclaration = function(node) {
+  this._scopeStack.declare(node.declarations[i].id.name, 'var')
+}
+
+proto._hoistVariableDeclaration = function(node) {
+  for(var i = 0, len = node.declarations.length; i < len; ++i) {
+    this._scopeStack.declare(node.declarations[i].id.name, node.kind)
+  }
 }
 
 proto._assumeDefined = function(name) {
