@@ -3,6 +3,8 @@ module.exports = CFGFactory
 var createBlockStack = require('./block-stack.js')
 var createValueStack = require('./value-stack.js')
 var createScopeStack = require('./scope-stack.js')
+var ObjectValue = require('./lib/object.js')
+var typeOf = require('./lib/types.js')
 
 var estraverse = require('estraverse')
 
@@ -214,6 +216,12 @@ proto._hoist = function cfg_hoist(node) {
 
 proto._hoistFunctionDeclaration = function(node) {
   this._scopeStack.declare(node.declarations[i].id.name, 'var')
+  this._scopeStack.lookup(node.declarations[i].id.name).assign(
+    new ObjectValue(typeOf.FUNCTION, ObjectValue.HCI_FUNCTION, codegen)
+  )
+
+  function codegen() {
+  }
 }
 
 proto._hoistVariableDeclaration = function(node) {
