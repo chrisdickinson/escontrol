@@ -22,10 +22,10 @@ proto.pop = function() {
 
 proto.declare = function(str, kind) {
   if (kind !== 'VariableDeclaration') {
-    this._current.declare(name)
+    this._current.declare(str)
   }
 
-  var current = this.current
+  var current = this._current
   var okay = false
   do {
     switch(current._block.type) {

@@ -2,6 +2,9 @@ module.exports = ValueStack
 
 var typeOf = require('./lib/types.js')
 
+var ObjectValue = require('./lib/object.js')
+var Value = require('./lib/value.js')
+
 function ValueStack() {
   if (!(this instanceof ValueStack)) {
     return new ValueStack
@@ -14,10 +17,15 @@ var cons = ValueStack
 var proto = cons.prototype
 
 proto.push = function (value, isStatic) {
-  this._values.push({
-    staticValue: value,
-    type: typeOf(value) | (isStatic ? typeOf.STATIC : 0)
-  })
+  var wrapped = new Value(
+    typeOf(value) | (isStatic ? typeOf.STATIC : 0),
+    value
+  )
+  this._values.push(wrapped)
+}
+
+proto.pushHole = function() {
+  this._values.push(null)
 }
 
 proto.pop = function () {
@@ -31,19 +39,25 @@ proto.current = function () {
 
 proto.toArray = function() {
   var values = this._values.slice()
-
+  var objectValue = new ObjectValue(typeOf.OBJECT, ObjectValue.HCI_ARRAY, null)
   this._values.length = 0
   var isStatic = true
   var staticValue = new Array(values.length)
 
-  for(var i = 0, len = values.length; i < len; ++i) {
-    if ((values[i].type & typeOf.STATIC) === 0) {
-      isStatic = false
-      break
+  for (var i = 0, len = values.length; i < len; ++i) {
+    if (!values[i]) {
+      continue
     }
 
-    staticValue[i] = values[i].staticValue
+    objectValue.setattr(i, values[i])
+    if (isStatic && (values[i].type & typeOf.STATIC) === 0) {
+      isStatic = false
+    }
   }
 
-  this.push(staticValue, isStatic)
+  if (isStatic) {
+    objectValue._type &= typeOf.STATIC
+  }
+
+  this._values.push(objectValue)
 }
