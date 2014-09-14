@@ -124,6 +124,11 @@ proto._createArrayNode = function() {
   return {operation: '(array)'}
 }
 
+proto._createObjectNode = function() {
+  this._valueStack.toObject()
+  return {operation: '(object)'}
+}
+
 proto._createUnreachable = function() {
   return {operation: '(unreachable)'}
 }
@@ -178,6 +183,7 @@ proto._visit = function cfg_visit(node) {
     case 'ContinueStatement': return this._pushFrame(this.visitContinueStatement, node)
     case 'SwitchStatement': return this._pushFrame(this.visitSwitchStatement, node)
     case 'ArrayExpression': return this._pushFrame(this.visitArrayExpression, node)
+    case 'ObjectExpression': return this._pushFrame(this.visitObjectExpression, node)
     case 'UnaryExpression': return this._pushFrame(this.visitUnaryExpression, node)
     case 'ReturnStatement': return this._pushFrame(this.visitReturnStatement, node)
     case 'ThrowStatement': return this._pushFrame(this.visitThrowStatement, node)
@@ -244,6 +250,7 @@ require('./lib/visit-expr-unary.js')(proto)
 require('./lib/visit-stmt-return.js')(proto)
 require('./lib/visit-stmt-throw.js')(proto)
 require('./lib/visit-expr-identifier.js')(proto)
+require('./lib/visit-expr-object.js')(proto)
 
 if(false) {
 require('./lib/visit-stmt-function.js')(proto)
@@ -255,7 +262,6 @@ require('./lib/visit-stmt-var-declaration.js')(proto)
 }
 
 if(false) {
-require('./lib/visit-expr-object.js')(proto)
 require('./lib/visit-expr-new.js')(proto)
 require('./lib/visit-expr-call.js')(proto)
 require('./lib/visit-expr-assignment.js')(proto)

@@ -28,6 +28,10 @@ proto.pushHole = function() {
   this._values.push(null)
 }
 
+proto.pushKey = function(key) {
+  this._values.push(key)
+}
+
 proto.pop = function () {
   return this._values.pop()
 }
@@ -42,7 +46,6 @@ proto.toArray = function() {
   var objectValue = new ObjectValue(typeOf.OBJECT, ObjectValue.HCI_ARRAY, null)
   this._values.length = 0
   var isStatic = true
-  var staticValue = new Array(values.length)
 
   for (var i = 0, len = values.length; i < len; ++i) {
     if (!values[i]) {
@@ -60,4 +63,25 @@ proto.toArray = function() {
   }
 
   this._values.push(objectValue)
+}
+
+proto.toObject = function() {
+  var values = this._values.slice()
+  var objectValue = new ObjectValue(typeOf.OBJECT, ObjectValue.HCI_EMPTY, null)
+  this._values.length = 0
+  var isStatic = true
+
+  for (var i = 0, len = values.length; i < len; i += 2) {
+    objectValue.setattr(values[i], values[i + 1])
+    if (isStatic && (values[i + 1].type & typeOf.STATIC) === 0) {
+      isStatic = false
+    }
+  }
+
+  if (isStatic) {
+    objectValue._type &= typeOf.STATIC
+  }
+
+  this._values.push(objectValue)
+
 }
