@@ -222,10 +222,6 @@ proto._hoistVariableDeclaration = function(node) {
   }
 }
 
-proto._assumeDefined = function(name) {
-
-}
-
 function Frame(fn, context) {
   this.fn = fn
   this.context = context
