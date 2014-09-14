@@ -7,6 +7,7 @@ function ScopeStack() {
     return new ScopeStack
   }
 
+  this._root = null
   this._current = null
 }
 
@@ -14,10 +15,15 @@ var proto = ScopeStack.prototype
 
 proto.push = function(block) {
   this._current = new Scope(this._current, block)
+  this._root = this._root || this._current
 }
 
 proto.pop = function() {
   this._current = this._current._parent
+}
+
+proto.root = function() {
+  return this._root
 }
 
 proto.declare = function(str, kind) {

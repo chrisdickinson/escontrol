@@ -83,8 +83,8 @@ proto._connect = function(from, to) {
   this._lastNode = to
 }
 
-proto._pushFrame = function(fn, context) {
-  this._stack.push(new Frame(fn, context))
+proto._pushFrame = function(fn, context, isLValue) {
+  this._stack.push(new Frame(fn, context, Boolean(isLValue)))
 }
 
 proto._pushBlock = function cfg_pushBlock(node, hasException) {
@@ -103,6 +103,10 @@ proto._pushBlock = function cfg_pushBlock(node, hasException) {
 
 proto._popBlock = function() {
   return this._blockStack.pop()
+}
+
+proto._isLValue = function() {
+  return this._stack[this._stack.length - 1].isLValue
 }
 
 proto._pushValue = function cfg_pushValue(value, isStatic, fromName) {
@@ -189,6 +193,7 @@ proto._visit = function cfg_visit(node) {
     case 'UnaryExpression': return this._pushFrame(this.visitUnaryExpression, node)
     case 'ReturnStatement': return this._pushFrame(this.visitReturnStatement, node)
     case 'ThrowStatement': return this._pushFrame(this.visitThrowStatement, node)
+    case 'AssignmentExpression': return this._pushFrame(this.visitAssignmentExpression, node)
   }
 }
 
@@ -230,9 +235,10 @@ proto._hoistVariableDeclaration = function(node) {
   }
 }
 
-function Frame(fn, context) {
+function Frame(fn, context, isLValue) {
   this.fn = fn
   this.context = context
+  this.isLValue = isLValue
 }
 
 require('./lib/visit-stmt-block.js')(proto)
@@ -255,6 +261,7 @@ require('./lib/visit-stmt-return.js')(proto)
 require('./lib/visit-stmt-throw.js')(proto)
 require('./lib/visit-expr-identifier.js')(proto)
 require('./lib/visit-expr-object.js')(proto)
+require('./lib/visit-expr-assignment.js')(proto)
 
 if(false) {
 require('./lib/visit-stmt-function.js')(proto)
@@ -268,7 +275,6 @@ require('./lib/visit-stmt-var-declaration.js')(proto)
 if(false) {
 require('./lib/visit-expr-new.js')(proto)
 require('./lib/visit-expr-call.js')(proto)
-require('./lib/visit-expr-assignment.js')(proto)
 require('./lib/visit-expr-member.js')(proto)
 require('./lib/visit-expr-update.js')(proto)
 require('./lib/visit-expr-this.js')(proto)
