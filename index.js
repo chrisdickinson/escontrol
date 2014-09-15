@@ -87,8 +87,8 @@ proto._pushFrame = function(fn, context, isLValue) {
   this._stack.push(new Frame(fn, context, Boolean(isLValue)))
 }
 
-proto._pushBlock = function cfg_pushBlock(node, hasException) {
-  this._blockStack.pushState(node, this._labels, hasException)
+proto._pushBlock = function cfg_pushBlock(node, hasException, finalizerNode) {
+  this._blockStack.pushState(node, this._labels, hasException, finalizerNode)
   this._labels.length = 0
 
   var current = this._blockStack.current()
@@ -195,6 +195,7 @@ proto._visit = function cfg_visit(node) {
     case 'ReturnStatement': return this._pushFrame(this.visitReturnStatement, node)
     case 'ThrowStatement': return this._pushFrame(this.visitThrowStatement, node)
     case 'AssignmentExpression': return this._pushFrame(this.visitAssignmentExpression, node)
+    case 'TryStatement': return this._pushFrame(this.visitTryStatement, node)
   }
 }
 
@@ -264,12 +265,12 @@ require('./lib/visit-expr-identifier.js')(proto)
 require('./lib/visit-expr-object.js')(proto)
 require('./lib/visit-expr-assignment.js')(proto)
 require('./lib/visit-expr-member.js')(proto)
+require('./lib/visit-stmt-try.js')(proto)
 
 if(false) {
 require('./lib/visit-stmt-function.js')(proto)
 require('./lib/visit-stmt-for-of.js')(proto)
 require('./lib/visit-stmt-for-in.js')(proto)
-require('./lib/visit-stmt-try.js')(proto)
 require('./lib/visit-stmt-with.js')(proto)
 require('./lib/visit-stmt-var-declaration.js')(proto)
 }

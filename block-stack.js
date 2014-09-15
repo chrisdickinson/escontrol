@@ -14,10 +14,10 @@ proto.current = function () {
   return this._block
 }
 
-proto.pushState = function (node, labels, hasException) {
+proto.pushState = function (node, labels, hasException, finalizer) {
   this._block = new Block(this._block, node, labels, hasException ? {
     type: 'exception'
-  } : null)
+  } : null, finalizer || null)
 }
 
 proto.pop = function () {
@@ -28,10 +28,11 @@ proto.pop = function () {
   return last
 }
 
-function Block(parent, astNode, labels, exc) {
+function Block(parent, astNode, labels, exc, finalizer) {
   this.type = astNode.type
   this._parent = parent
   this.labels = labels.slice()
+  this.finalizer = finalizer || null
 
   this.enter = {type: 'enter ' + astNode.type}
   this.exit = {type: 'exit ' + astNode.type}
