@@ -191,6 +191,7 @@ proto._visit = function cfg_visit(node) {
     case 'ArrayExpression': return this._pushFrame(this.visitArrayExpression, node)
     case 'ObjectExpression': return this._pushFrame(this.visitObjectExpression, node)
     case 'UnaryExpression': return this._pushFrame(this.visitUnaryExpression, node)
+    case 'MemberExpression': return this._pushFrame(this.visitMemberExpression, node)
     case 'ReturnStatement': return this._pushFrame(this.visitReturnStatement, node)
     case 'ThrowStatement': return this._pushFrame(this.visitThrowStatement, node)
     case 'AssignmentExpression': return this._pushFrame(this.visitAssignmentExpression, node)
@@ -262,6 +263,7 @@ require('./lib/visit-stmt-throw.js')(proto)
 require('./lib/visit-expr-identifier.js')(proto)
 require('./lib/visit-expr-object.js')(proto)
 require('./lib/visit-expr-assignment.js')(proto)
+require('./lib/visit-expr-member.js')(proto)
 
 if(false) {
 require('./lib/visit-stmt-function.js')(proto)
@@ -275,7 +277,6 @@ require('./lib/visit-stmt-var-declaration.js')(proto)
 if(false) {
 require('./lib/visit-expr-new.js')(proto)
 require('./lib/visit-expr-call.js')(proto)
-require('./lib/visit-expr-member.js')(proto)
 require('./lib/visit-expr-update.js')(proto)
 require('./lib/visit-expr-this.js')(proto)
 }
