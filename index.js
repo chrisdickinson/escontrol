@@ -196,6 +196,7 @@ proto._visit = function cfg_visit(node) {
     case 'ThrowStatement': return this._pushFrame(this.visitThrowStatement, node)
     case 'AssignmentExpression': return this._pushFrame(this.visitAssignmentExpression, node)
     case 'TryStatement': return this._pushFrame(this.visitTryStatement, node)
+    case 'VariableDeclaration': return this._pushFrame(this.visitVariableDeclaration, node)
   }
 }
 
@@ -243,36 +244,36 @@ function Frame(fn, context, isLValue) {
   this.isLValue = isLValue
 }
 
-require('./lib/visit-stmt-block.js')(proto)
-require('./lib/visit-stmt-program.js')(proto)
-require('./lib/visit-stmt-expr.js')(proto)
-require('./lib/visit-expr-literal.js')(proto)
-require('./lib/visit-expr-binary.js')(proto)
-require('./lib/visit-expr-sequence.js')(proto)
-require('./lib/visit-stmt-conditional.js')(proto)
-require('./lib/visit-expr-logical.js')(proto)
-require('./lib/visit-stmt-for.js')(proto)
-require('./lib/visit-stmt-while.js')(proto)
-require('./lib/visit-stmt-do-while.js')(proto)
-require('./lib/visit-stmt-break.js')(proto)
-require('./lib/visit-stmt-continue.js')(proto)
-require('./lib/visit-stmt-switch.js')(proto)
 require('./lib/visit-expr-array.js')(proto)
-require('./lib/visit-expr-unary.js')(proto)
-require('./lib/visit-stmt-return.js')(proto)
-require('./lib/visit-stmt-throw.js')(proto)
-require('./lib/visit-expr-identifier.js')(proto)
-require('./lib/visit-expr-object.js')(proto)
 require('./lib/visit-expr-assignment.js')(proto)
+require('./lib/visit-expr-binary.js')(proto)
+require('./lib/visit-expr-identifier.js')(proto)
+require('./lib/visit-expr-literal.js')(proto)
+require('./lib/visit-expr-logical.js')(proto)
 require('./lib/visit-expr-member.js')(proto)
+require('./lib/visit-expr-object.js')(proto)
+require('./lib/visit-expr-sequence.js')(proto)
+require('./lib/visit-expr-unary.js')(proto)
+require('./lib/visit-stmt-block.js')(proto)
+require('./lib/visit-stmt-break.js')(proto)
+require('./lib/visit-stmt-conditional.js')(proto)
+require('./lib/visit-stmt-continue.js')(proto)
+require('./lib/visit-stmt-do-while.js')(proto)
+require('./lib/visit-stmt-expr.js')(proto)
+require('./lib/visit-stmt-for.js')(proto)
+require('./lib/visit-stmt-program.js')(proto)
+require('./lib/visit-stmt-return.js')(proto)
+require('./lib/visit-stmt-switch.js')(proto)
+require('./lib/visit-stmt-throw.js')(proto)
 require('./lib/visit-stmt-try.js')(proto)
+require('./lib/visit-stmt-while.js')(proto)
+require('./lib/visit-stmt-var-declaration.js')(proto)
 
 if(false) {
 require('./lib/visit-stmt-function.js')(proto)
 require('./lib/visit-stmt-for-of.js')(proto)
 require('./lib/visit-stmt-for-in.js')(proto)
 require('./lib/visit-stmt-with.js')(proto)
-require('./lib/visit-stmt-var-declaration.js')(proto)
 }
 
 if(false) {
