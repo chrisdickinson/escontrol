@@ -71,3 +71,7 @@ proto.lookup = function(str) {
   return this._names[str] ||
     (this._parent ? this._parent.lookup(str) : null)
 }
+
+proto.del = function(str) {
+  delete this._names[str]
+}
