@@ -41,10 +41,10 @@ proto.current = function () {
   return last
 }
 
-proto.toArray = function() {
-  var values = this._values.slice()
+proto.toArray = function(len) {
+  var values = this._values.slice(-len)
   var objectValue = new ObjectValue(typeOf.OBJECT, ObjectValue.HCI_ARRAY, null)
-  this._values.length = 0
+  this._values.length -= len
   var isStatic = true
 
   for (var i = 0, len = values.length; i < len; ++i) {
@@ -65,10 +65,10 @@ proto.toArray = function() {
   this._values.push(objectValue)
 }
 
-proto.toObject = function() {
-  var values = this._values.slice()
+proto.toObject = function(len) {
+  var values = this._values.slice(len * -2)
   var objectValue = new ObjectValue(typeOf.OBJECT, ObjectValue.HCI_EMPTY, null)
-  this._values.length = 0
+  this._values.length -= len * 2
   var isStatic = true
 
   for (var i = 0, len = values.length; i < len; i += 2) {
@@ -83,5 +83,4 @@ proto.toObject = function() {
   }
 
   this._values.push(objectValue)
-
 }

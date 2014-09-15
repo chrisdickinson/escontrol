@@ -125,14 +125,14 @@ proto._popValue = function() {
   return {operation: '(pop ' + val.staticValue + ')'}
 }
 
-proto._createArrayNode = function() {
-  this._valueStack.toArray()
-  return {operation: '(array)'}
+proto._createArrayNode = function(len) {
+  this._valueStack.toArray(len)
+  return {operation: '(array)', size: len}
 }
 
-proto._createObjectNode = function() {
-  this._valueStack.toObject()
-  return {operation: '(object)'}
+proto._createObjectNode = function(len) {
+  this._valueStack.toObject(len)
+  return {operation: '(object)', size: len}
 }
 
 proto._createUnreachable = function() {
