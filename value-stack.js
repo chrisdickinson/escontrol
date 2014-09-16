@@ -52,7 +52,7 @@ proto.toArray = function(len) {
       continue
     }
 
-    objectValue.setattr(i, values[i])
+    objectValue.declare(i).assign(values[i])
     if (isStatic && (values[i].type & typeOf.STATIC) === 0) {
       isStatic = false
     }
@@ -72,7 +72,7 @@ proto.toObject = function(len) {
   var isStatic = true
 
   for (var i = 0, len = values.length; i < len; i += 2) {
-    objectValue.setattr(values[i], values[i + 1])
+    objectValue.declare(values[i]).assign(values[i + 1])
     if (isStatic && (values[i + 1].type & typeOf.STATIC) === 0) {
       isStatic = false
     }

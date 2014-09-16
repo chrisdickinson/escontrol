@@ -122,7 +122,7 @@ proto._popValue = function() {
   var val = this._valueStack.pop()
 
   // XXX: what do nodes look like?
-  return {operation: '(pop ' + val.staticValue + ')'}
+  return {operation: '(pop)', value: val}
 }
 
 proto._createArrayNode = function(len) {
@@ -167,6 +167,7 @@ proto._throwException = function(typeName) {
 
 proto._visit = function cfg_visit(node) {
   switch(node.type) {
+    case 'DebuggerStatement':
     case 'EmptyStatement': return
     case 'LabeledStatement':
       this._labels.push(node.label.name)
@@ -183,6 +184,7 @@ proto._visit = function cfg_visit(node) {
     case 'IfStatement': return this._pushFrame(this.visitIfStatement, node)
     case 'LogicalExpression': return this._pushFrame(this.visitLogicalExpression, node)
     case 'ForStatement': return this._pushFrame(this.visitForStatement, node)
+    case 'ForInStatement': return this._pushFrame(this.visitForInStatement, node)
     case 'WhileStatement': return this._pushFrame(this.visitWhileStatement, node)
     case 'DoWhileStatement': return this._pushFrame(this.visitDoWhileStatement, node)
     case 'BreakStatement': return this._pushFrame(this.visitBreakStatement, node)
@@ -268,11 +270,11 @@ require('./lib/visit-stmt-throw.js')(proto)
 require('./lib/visit-stmt-try.js')(proto)
 require('./lib/visit-stmt-while.js')(proto)
 require('./lib/visit-stmt-var-declaration.js')(proto)
+require('./lib/visit-stmt-for-in.js')(proto)
 
 if(false) {
 require('./lib/visit-stmt-function.js')(proto)
 require('./lib/visit-stmt-for-of.js')(proto)
-require('./lib/visit-stmt-for-in.js')(proto)
 require('./lib/visit-stmt-with.js')(proto)
 }
 
