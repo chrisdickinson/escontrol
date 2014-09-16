@@ -3,6 +3,7 @@ module.exports = CFGFactory
 var createBlockStack = require('./block-stack.js')
 var createValueStack = require('./value-stack.js')
 var createScopeStack = require('./scope-stack.js')
+var createCallStack = require('./call-stack.js')
 var ObjectValue = require('./lib/object.js')
 var typeOf = require('./lib/types.js')
 
@@ -16,9 +17,11 @@ function CFGFactory(node) {
   this._stack = []
   this._graphs = []
   this._lastNode = null
+  this._global = new ObjectValue(typeOf.OBJECT, ObjectValue.HCI_EMPTY)
   this._valueStack = createValueStack()
   this._blockStack = createBlockStack()
-  this._scopeStack = createScopeStack()
+  this._scopeStack = createScopeStack(this._global)
+  this._callStack = createCallStack()
   this._connectionKind = []
   this._nodes = []
   this._edges = []
@@ -26,6 +29,7 @@ function CFGFactory(node) {
 
   this._blockStack.pushState(node, [], true)
   this._scopeStack.push(this._blockStack.current())
+  this._callStack.pushFrame(this._global, [], false, this._blockStack.current())
   this._pushFrame(this._visit, node)
 }
 

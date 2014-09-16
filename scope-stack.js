@@ -2,13 +2,13 @@ module.exports = ScopeStack
 
 var createName = require('./lib/name.js')
 
-function ScopeStack() {
+function ScopeStack(root) {
   if(!(this instanceof ScopeStack)) {
-    return new ScopeStack
+    return new ScopeStack(root)
   }
 
-  this._root = null
-  this._current = null
+  this._root = root
+  this._current = root
 }
 
 var proto = ScopeStack.prototype
