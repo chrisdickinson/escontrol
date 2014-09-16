@@ -18,10 +18,20 @@ proto.popFrame = function() {
   this._current = this._current.parent
 }
 
+proto.current = function() {
+  return this._current
+}
+
 function Frame(thisValue, args, isNew, parent, fromBlock) {
   this._thisValue = thisValue
   this._args = args
   this._isNew = isNew
   this._fromBlock = fromBlock
   this.parent = parent
+}
+
+var proto = Frame.prototype
+
+proto.getThis = function() {
+  return this._thisValue
 }

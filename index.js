@@ -194,10 +194,12 @@ proto._visit = function cfg_visit(node) {
     case 'BreakStatement': return this._pushFrame(this.visitBreakStatement, node)
     case 'ContinueStatement': return this._pushFrame(this.visitContinueStatement, node)
     case 'SwitchStatement': return this._pushFrame(this.visitSwitchStatement, node)
+    case 'ThisExpression': return this._pushFrame(this.visitThisExpression, node)
     case 'ArrayExpression': return this._pushFrame(this.visitArrayExpression, node)
     case 'ObjectExpression': return this._pushFrame(this.visitObjectExpression, node)
     case 'UnaryExpression': return this._pushFrame(this.visitUnaryExpression, node)
     case 'MemberExpression': return this._pushFrame(this.visitMemberExpression, node)
+    case 'UpdateExpression': return this._pushFrame(this.visitUpdateExpression, node)
     case 'ReturnStatement': return this._pushFrame(this.visitReturnStatement, node)
     case 'ThrowStatement': return this._pushFrame(this.visitThrowStatement, node)
     case 'AssignmentExpression': return this._pushFrame(this.visitAssignmentExpression, node)
@@ -244,6 +246,10 @@ proto._hoistVariableDeclaration = function(node) {
   }
 }
 
+proto._currentCallFrame = function() {
+  return this._callStack.current()
+}
+
 function Frame(fn, context, isLValue) {
   this.fn = fn
   this.context = context
@@ -275,6 +281,8 @@ require('./lib/visit-stmt-try.js')(proto)
 require('./lib/visit-stmt-while.js')(proto)
 require('./lib/visit-stmt-var-declaration.js')(proto)
 require('./lib/visit-stmt-for-in.js')(proto)
+require('./lib/visit-expr-this.js')(proto)
+require('./lib/visit-expr-update.js')(proto)
 
 if(false) {
 require('./lib/visit-stmt-function.js')(proto)
@@ -285,6 +293,4 @@ require('./lib/visit-stmt-with.js')(proto)
 if(false) {
 require('./lib/visit-expr-new.js')(proto)
 require('./lib/visit-expr-call.js')(proto)
-require('./lib/visit-expr-update.js')(proto)
-require('./lib/visit-expr-this.js')(proto)
 }
