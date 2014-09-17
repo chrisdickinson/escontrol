@@ -54,9 +54,9 @@ proto.declare = function(str, kind) {
     if (okay) current = current._prototype
   } while(current && okay)
 
-  current.declare(str)
+  return current.declare(str)
 }
 
-proto.lookup = function(str) {
-  return this._current.lookup(str)
+proto.lookup = function(str, immediate) {
+  return this._current.lookup(str, immediate)
 }
