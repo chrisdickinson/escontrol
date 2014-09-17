@@ -34,7 +34,7 @@ proto.root = function() {
 
 proto.declare = function(str, kind) {
   if (kind !== 'VariableDeclaration') {
-    this._current.declare(str)
+    return this._current.declare(str)
   }
 
   var current = this._current
