@@ -1,3 +1,5 @@
+'use strict'
+
 module.exports = CFGFactory
 
 var createBlockStack = require('./block-stack.js')

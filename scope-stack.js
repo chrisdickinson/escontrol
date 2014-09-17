@@ -1,6 +1,9 @@
+'use strict'
+
 module.exports = ScopeStack
 
-var createName = require('./lib/name.js')
+var ObjectValue = require('./lib/object.js')
+var typeOf = require('./lib/types.js')
 
 function ScopeStack(root) {
   if(!(this instanceof ScopeStack)) {
@@ -13,13 +16,16 @@ function ScopeStack(root) {
 
 var proto = ScopeStack.prototype
 
+
+
 proto.push = function(block) {
-  this._current = new Scope(this._current, block)
+  this._current = new ObjectValue(typeOf.OBJECT, ObjectValue.HCI_EMPTY, this._current, null)
+  this._current._blockType = block.type
   this._root = this._root || this._current
 }
 
 proto.pop = function() {
-  this._current = this._current._parent
+  this._current = this._current._prototype
 }
 
 proto.root = function() {
@@ -34,7 +40,7 @@ proto.declare = function(str, kind) {
   var current = this._current
   var okay = false
   do {
-    switch(current._block.type) {
+    switch(current._blockType) {
       case 'Program':
       case 'FunctionDeclaration':
       case 'FunctionExpression':
@@ -45,7 +51,7 @@ proto.declare = function(str, kind) {
         okay = true
     }
 
-    if (okay) current = current._parent
+    if (okay) current = current._prototype
   } while(current && okay)
 
   current.declare(str)
@@ -53,25 +59,4 @@ proto.declare = function(str, kind) {
 
 proto.lookup = function(str) {
   return this._current.lookup(str)
-}
-
-function Scope(parent, block) {
-  this._names = {}
-  this._parent = parent
-  this._block = block
-}
-
-var proto = Scope.prototype
-
-proto.declare = function(str) {
-  return this._names[str] = createName(str)
-}
-
-proto.lookup = function(str) {
-  return this._names[str] ||
-    (this._parent ? this._parent.lookup(str) : null)
-}
-
-proto.del = function(str) {
-  delete this._names[str]
 }
