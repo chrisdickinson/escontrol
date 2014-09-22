@@ -29,6 +29,8 @@ function CFGFactory(node) {
   this._edges = []
   this._labels = []
 
+  this._branchID = 1
+
   this._blockStack.pushState(node, [], true)
   this._scopeStack.push(this._blockStack.current())
   this._callStack.pushFrame(this._global, [], false, this._blockStack.current())
@@ -37,6 +39,10 @@ function CFGFactory(node) {
 
 var cons = CFGFactory
 var proto = cons.prototype
+
+proto.global = function() {
+  return this._global
+}
 
 proto.advance = function cfg_next() {
   if (this._stack.length) {
@@ -71,15 +77,29 @@ proto.setNormal = function() {
   this._connectionKind.push('normal')
 }
 
+proto._branchOpen = function() {
+  var id = this._branchID++
+  this._scopeStack.pushBranch(id)
+  return id
+}
+
+proto._branchEnd = function(id) {
+  this._valueStack._values = this._valueStack._values.map(function(lhs) {
+    return lhs && lhs.unwrap && lhs.branchNumber === id ? lhs.unwrap() : lhs
+  })
+  this._scopeStack.pop()
+}
+
 proto._connect = function(from, to) {
   // something something something
   // edges will encode:
   //  * value/type flow ??
   //  * conditional flow
   //  * exceptional flow
+  var val = this._valueStack.current()
   this._edges.push({
     kind: this._connectionKind.pop() || 'normal',
-    value: this._valueStack.current(),
+    value: val && val.unwrap ? val.unwrap() : val,
     from: from,
     to: to,
   })

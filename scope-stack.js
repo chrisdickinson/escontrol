@@ -2,6 +2,7 @@
 
 module.exports = ScopeStack
 
+var WrappedObject = require('./lib/wrapped-object.js')
 var ObjectValue = require('./lib/object.js')
 var typeOf = require('./lib/types.js')
 
@@ -16,12 +17,15 @@ function ScopeStack(root) {
 
 var proto = ScopeStack.prototype
 
-
-
 proto.push = function(block) {
   this._current = new ObjectValue(typeOf.OBJECT, ObjectValue.HCI_EMPTY, this._current, null)
   this._current._blockType = block.type
   this._root = this._root || this._current
+}
+
+proto.pushBranch = function(branchID) {
+  this._current = new WrappedObject(this._current, branchID, this._current)
+  this._current._blockType = '(Branch)'
 }
 
 proto.pop = function() {
@@ -33,6 +37,20 @@ proto.root = function() {
 }
 
 proto.declare = function(str, kind) {
+  if (kind === 'imaginary') {
+    var current = this._current
+    while (current) { 
+      if (current._blockType === '(Branch)' || current._blockType === 'Program') {
+        break
+      }
+      current = current._parent
+    }
+    if (!current) {
+      throw new Error('out of blocks')
+    }
+    return current.declare(str)
+  }
+
   if (kind !== 'VariableDeclaration') {
     return this._current.declare(str)
   }

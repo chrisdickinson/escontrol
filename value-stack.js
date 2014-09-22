@@ -66,7 +66,7 @@ proto.toArray = function(len) {
 }
 
 proto.toObject = function(len) {
-  var values = this._values.slice(len * -2)
+  var values = len ? this._values.slice(len * -2) : []
   var objectValue = new ObjectValue(typeOf.OBJECT, ObjectValue.HCI_EMPTY, null)
   this._values.length -= len * 2
   var isStatic = true
