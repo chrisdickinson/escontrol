@@ -21,7 +21,9 @@ function CFGFactory(node) {
   this._lastNode = null
   this._global = new ObjectValue(typeOf.OBJECT, ObjectValue.HCI_EMPTY)
   this._valueStack = createValueStack()
-  this._blockStack = createBlockStack()
+  this._blockStack = null
+  this._blockStacks = []
+  this._pushBlockStack()
   this._scopeStack = createScopeStack(this._global)
   this._callStack = createCallStack()
   this._connectionKind = []
@@ -32,7 +34,6 @@ function CFGFactory(node) {
   this._branchID = 1
 
   this._blockStack.pushState(node, [], true)
-  this._scopeStack.push(this._blockStack.current())
   this._callStack.pushFrame(this._global, [], false, this._blockStack.current())
   this._pushFrame(this._visit, node)
 }
@@ -42,6 +43,16 @@ var proto = cons.prototype
 
 proto.global = function() {
   return this._global
+}
+
+proto._pushBlockStack = function() {
+  this._blockStack = createBlockStack()
+  this._blockStacks.push(this._blockStack)
+}
+
+proto._popBlockStack = function() {
+  this._blockStacks.pop()
+  this._blockStack = this._blockStacks[this._blockStacks.length - 1]
 }
 
 proto.advance = function cfg_next() {
@@ -122,7 +133,10 @@ proto._pushBlock = function cfg_pushBlock(node, hasException, finalizerNode) {
   this._nodes.push(current.enter)
   this._nodes.push(current.exit)
   this._nodes.push(current.exception)
-  this._connect(this.last(), current.enter)
+
+  if (!FUNCTIONS[node.type]) {
+    this._connect(this.last(), current.enter)
+  }
 
   return current
 }
@@ -228,6 +242,8 @@ proto._visit = function cfg_visit(node) {
     case 'AssignmentExpression': return this._pushFrame(this.visitAssignmentExpression, node)
     case 'TryStatement': return this._pushFrame(this.visitTryStatement, node)
     case 'VariableDeclaration': return this._pushFrame(this.visitVariableDeclaration, node)
+    case 'FunctionExpression': return this._pushFrame(this.visitFunctionExpression, node)
+    case 'CallExpression': return this._pushFrame(this.visitCallExpression, node)
   }
 }
 
@@ -237,29 +253,31 @@ var FUNCTIONS = {
   , 'ArrowExpression': true
 }
 
-proto._hoist = function cfg_hoist(node) {
+proto._hoist = function cfg_hoist(inputNode) {
   var self = this
+  var items = []
 
-  estraverse.traverse(node, {enter: enter})
+  estraverse.traverse(inputNode, {enter: enter})
+
+  // this is a two step process -- we want to have
+  // already declared all of the hoisted names before
+  // visiting the function body.
+  for (var i = 0, len = items.length; i < len; ++i) {
+    var name = this._scopeStack.lookup(items[i].id.name)
+    name.assign(this.visitFunctionExpression(items[i]))
+  }
 
   function enter(node, parent) {
     if (node.type === 'VariableDeclaration') {
       self._hoistVariableDeclaration(node)
-    } else if (node.type === 'FunctionDeclaration') {
-      self._hoistFunctionDeclaration(node)
-    } else if (FUNCTIONS[node.type] && node !== inputNode) {
+    } else if (node.type === 'FunctionDeclaration' && node !== inputNode) {
+      self._scopeStack.declare(node.id.name, 'var')
+      items.push(node)
+    }
+    
+    if (FUNCTIONS[node.type] && node !== inputNode) {
       this.skip()
     }
-  }
-}
-
-proto._hoistFunctionDeclaration = function(node) {
-  this._scopeStack.declare(node.declarations[i].id.name, 'var')
-  this._scopeStack.lookup(node.declarations[i].id.name).assign(
-    new ObjectValue(typeOf.FUNCTION, ObjectValue.HCI_FUNCTION, codegen)
-  )
-
-  function codegen() {
   }
 }
 
@@ -307,14 +325,14 @@ require('./lib/visit-stmt-var-declaration.js')(proto)
 require('./lib/visit-stmt-for-in.js')(proto)
 require('./lib/visit-expr-this.js')(proto)
 require('./lib/visit-expr-update.js')(proto)
+require('./lib/visit-expr-function.js')(proto)
+require('./lib/visit-expr-call.js')(proto)
 
 if(false) {
-require('./lib/visit-stmt-function.js')(proto)
 require('./lib/visit-stmt-for-of.js')(proto)
 require('./lib/visit-stmt-with.js')(proto)
 }
 
 if(false) {
 require('./lib/visit-expr-new.js')(proto)
-require('./lib/visit-expr-call.js')(proto)
 }

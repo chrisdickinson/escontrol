@@ -13,9 +13,14 @@ function ScopeStack(root) {
 
   this._root = root
   this._current = root
+  this._root._blockType = 'Program'
 }
 
 var proto = ScopeStack.prototype
+
+proto.current = function() {
+  return this._current
+}
 
 proto.push = function(block) {
   this._current = new ObjectValue(typeOf.OBJECT, ObjectValue.HCI_EMPTY, this._current, null)
@@ -43,15 +48,15 @@ proto.declare = function(str, kind) {
       if (current._blockType === '(Branch)' || current._blockType === 'Program') {
         break
       }
-      current = current._parent
+      current = current._prototype
     }
     if (!current) {
-      throw new Error('out of blocks')
+      throw new Error('out of blocks: ' + str + ' looking for ' + kind)
     }
     return current.declare(str)
   }
 
-  if (kind !== 'VariableDeclaration') {
+  if (kind !== 'var') {
     return this._current.declare(str)
   }
 
