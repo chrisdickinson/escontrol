@@ -6,7 +6,9 @@
   "devDependencies": {
     "esprima": "^1.2.2",
     "estraverse": "^1.5.1",
-    "pad": "^0.0.5"
+    "heapdump": "^0.2.10",
+    "pad": "0.0.5",
+    "pretty-bytes": "^1.0.1"
   },
   "dependencies": {
     "inherits": "^2.0.1"
