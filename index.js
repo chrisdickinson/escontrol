@@ -102,7 +102,7 @@ proto._branchEnd = function(id) {
   this._scopeStack.pop()
 }
 
-proto._connect = function(from, to) {
+proto._connect = function(from, to, retainValue) {
   // something something something
   // edges will encode:
   //  * value/type flow ??
@@ -111,7 +111,7 @@ proto._connect = function(from, to) {
   var val = this._valueStack.current()
   this._edges.push({
     kind: this._connectionKind.pop() || 'normal',
-    value: val && val.unwrap ? val.unwrap() : val,
+    value: retainValue ? (val && val.unwrap ? val.unwrap() : val) : null,
     from: from,
     to: to,
   })
@@ -245,7 +245,11 @@ proto._visit = function cfg_visit(node) {
     case 'VariableDeclaration': return this._pushFrame(this.visitVariableDeclaration, node)
     case 'FunctionExpression': return this._pushFrame(this.visitFunctionExpression, node)
     case 'CallExpression': return this._pushFrame(this.visitCallExpression, node)
+    case 'NewExpression': return this._pushFrame(this.visitNewExpression, node)
+    case 'FunctionDeclaration': return
   }
+  
+  throw new Error('unrecognized: ' + node.type)
 }
 
 var FUNCTIONS = {
@@ -339,6 +343,7 @@ require('./lib/visit-expr-this.js')(proto)
 require('./lib/visit-expr-update.js')(proto)
 require('./lib/visit-expr-function.js')(proto)
 require('./lib/visit-expr-call.js')(proto)
+require('./lib/visit-expr-new.js')(proto)
 
 if(false) {
 require('./lib/visit-stmt-for-of.js')(proto)
