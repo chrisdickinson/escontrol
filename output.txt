@@ -1,0 +1,369 @@
+47707a1 <an Object with map 0x2f17a7c1c6d1>
+    0x7fff5fbfec38: [top + 0] <- 0x2c5485e88aa9 ; rax 0x2c5485e88aa9 <JS Function matchAssign (SharedFunctionInfo 0x2c5485e43059)>
+  translating matchAssign => node=2, height=8
+    0x7fff5fbfec30: [top + 40] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfec28: [top + 32] <- 0x3bf87acb79dc ; caller's pc
+    0x7fff5fbfec20: [top + 24] <- 0x7fff5fbfec78 ; caller's fp
+    0x7fff5fbfec18: [top + 16] <- 0x2c5485e72709; context
+    0x7fff5fbfec10: [top + 8] <- 0x2c5485e88aa9; function
+    0x7fff5fbfec08: [top + 0] <- 0x2010c6804121 <undefined> ; literal
+[deoptimizing (eager): end 0x2c5485e88aa9 parseAssignmentExpression @41 => node=2, pc=0x3bf87acbe60a, state=NO_REGISTERS, alignment=no padding, took 0.044 ms]
+[removing optimized code for: parseAssignmentExpression]
+[deoptimizing (DEOPT eager): begin 0x2c5485e883e9 parseExpression (opt #64) @40, FP to SP delta: 80]
+            ;;; jump table entry 31: deoptimization bailout 40.
+  translating parseExpression => node=33, height=24
+    0x7fff5fbfecf0: [top + 56] <- 0x2010c6804121 ; [sp + 96] 0x2010c6804121 <undefined>
+    0x7fff5fbfece8: [top + 48] <- 0x3bf87ad26166 ; caller's pc
+    0x7fff5fbfece0: [top + 40] <- 0x7fff5fbfeed8 ; caller's fp
+    0x7fff5fbfecd8: [top + 32] <- 0x2c5485e72709; context
+    0x7fff5fbfecd0: [top + 24] <- 0x2c5485e883e9; function
+    0x7fff5fbfecc8: [top + 16] <- 0xc632bff7771 ; rbx 0xc632bff7771 <an Object with map 0x2f17a7c1d571>
+    0x7fff5fbfecc0: [top + 8] <- 0x3bd3647707a1 ; [sp + 48] 0x3bd3647707a1 <an Object with map 0x2f17a7c1c6d1>
+    0x7fff5fbfecb8: [top + 0] <- 0x2c5485e88671 ; rdi 0x2c5485e88671 <JS Function match (SharedFunctionInfo 0x2c5485e42f29)>
+  translating match => node=2, height=0
+    0x7fff5fbfecb0: [top + 40] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeca8: [top + 32] <- 0x3998e5830749 <String[1]: ,> ; literal
+    0x7fff5fbfeca0: [top + 24] <- 0x3bf87acb7673 ; caller's pc
+    0x7fff5fbfec98: [top + 16] <- 0x7fff5fbfece0 ; caller's fp
+    0x7fff5fbfec90: [top + 8] <- 0x2c5485e72709; context
+    0x7fff5fbfec88: [top + 0] <- 0x2c5485e88671; function
+[deoptimizing (eager): end 0x2c5485e88671 parseExpression @40 => node=2, pc=0x3bf87acbad26, state=NO_REGISTERS, alignment=no padding, took 0.026 ms]
+[removing optimized code for: parseExpression]
+[deoptimizing (DEOPT eager): begin 0x2c5485e88af1 consumeSemicolon (opt #30) @35, FP to SP delta: 64]
+            ;;; jump table entry 26: deoptimization bailout 35.
+  translating consumeSemicolon => node=30, height=16
+    0x7fff5fbfecf0: [top + 48] <- 0x2010c6804121 ; [sp + 80] 0x2010c6804121 <undefined>
+    0x7fff5fbfece8: [top + 40] <- 0x3bf87ad26312 ; caller's pc
+    0x7fff5fbfece0: [top + 32] <- 0x7fff5fbfeed8 ; caller's fp
+    0x7fff5fbfecd8: [top + 24] <- 0x2c5485e72709; context
+    0x7fff5fbfecd0: [top + 16] <- 0x2c5485e88af1; function
+    0x7fff5fbfecc8: [top + 8] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfecc0: [top + 0] <- 0x2c5485e88671 ; rcx 0x2c5485e88671 <JS Function match (SharedFunctionInfo 0x2c5485e42f29)>
+  translating match => node=2, height=0
+    0x7fff5fbfecb8: [top + 40] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfecb0: [top + 32] <- 0x3998e5832cc9 <String[1]: ;> ; literal
+    0x7fff5fbfeca8: [top + 24] <- 0x3bf87acbeb64 ; caller's pc
+    0x7fff5fbfeca0: [top + 16] <- 0x7fff5fbfece0 ; caller's fp
+    0x7fff5fbfec98: [top + 8] <- 0x2c5485e72709; context
+    0x7fff5fbfec90: [top + 0] <- 0x2c5485e88671; function
+[deoptimizing (eager): end 0x2c5485e88671 consumeSemicolon @35 => node=2, pc=0x3bf87acbad26, state=NO_REGISTERS, alignment=no padding, took 0.022 ms]
+[removing optimized code for: consumeSemicolon]
+[deoptimizing (DEOPT soft): begin 0x3961c17069c9 traverse (opt #136) @84, FP to SP delta: 448]
+            ;;; deoptimize: Insufficient type feedback for generic named access
+  translating traverse => node=189, height=120
+    0x7fff5fbfef58: [top + 168] <- 0x3bd364911079 ; [sp + 256] 0x3bd364911079 <a Controller with map 0x1e9d9b6ed09>
+    0x7fff5fbfef50: [top + 160] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfef48: [top + 152] <- 0x3bd364911049 ; [sp + 264] 0x3bd364911049 <an Object with map 0x1e9d9b6eb11>
+    0x7fff5fbfef40: [top + 144] <- 0x3bf87ada198a ; caller's pc
+    0x7fff5fbfef38: [top + 136] <- 0x7fff5fbfef80 ; caller's fp
+    0x7fff5fbfef30: [top + 128] <- 0x3bd3647e92c9; context
+    0x7fff5fbfef28: [top + 120] <- 0x3961c17069c9; function
+    0x7fff5fbfef20: [top + 112] <- 0x3bd364911329 ; [sp + 272] 0x3bd364911329 <JS Array[22421]>
+    0x7fff5fbfef18: [top + 104] <- 0x3bd364911441 ; [sp + 280] 0x3bd364911441 <JS Array[3]>
+    0x7fff5fbfef10: [top + 96] <- 0x3bd364c656a9 ; [sp + 0] 0x3bd364c656a9 <an Element with map 0x1e9d9b6ef01>
+    0x7fff5fbfef08: [top + 88] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfef00: [top + 80] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeef8: [top + 72] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeef0: [top + 64] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeee8: [top + 56] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeee0: [top + 48] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeed8: [top + 40] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeed0: [top + 32] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeec8: [top + 24] <- 0x3bd364911721 ; [sp + 288] 0x3bd364911721 <an Object with map 0x2f17a7c08d81>
+    0x7fff5fbfeec0: [top + 16] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeeb8: [top + 8] <- 0x3bd364911079 ; [sp + 256] 0x3bd364911079 <a Controller with map 0x1e9d9b6ed09>
+    0x7fff5fbfeeb0: [top + 0] <- 0x3961c1706839 ; rax 0x3961c1706839 <JS Function __execute (SharedFunctionInfo 0x3961c1705391)>
+[deoptimizing (soft): end 0x3961c17069c9 traverse @84 => node=189, pc=0x3bf87ada1da5, state=TOS_REG, alignment=no padding, took 0.104 ms]
+[removing optimized code for: traverse]
+[deoptimizing (DEOPT eager): begin 0x3bd364910f79 enter (opt #137) @11, FP to SP delta: 40]
+            ;;; jump table entry 2: deoptimization bailout 11.
+  translating enter => node=3, height=0
+    0x7fff5fbfee70: [top + 48] <- 0x3bd364911079 ; [sp + 72] 0x3bd364911079 <a Controller with map 0x1e9d9b6ed09>
+    0x7fff5fbfee68: [top + 40] <- 0x365e2ad44951 ; rbx 0x365e2ad44951 <an Object with map 0x2f17a7c1ccb9>
+    0x7fff5fbfee60: [top + 32] <- 0x3bd364771001 ; [sp + 56] 0x3bd364771001 <an Object with map 0x1e9d9b5a711>
+    0x7fff5fbfee58: [top + 24] <- 0x3bf87ada9de7 ; caller's pc
+    0x7fff5fbfee50: [top + 16] <- 0x7fff5fbfee90 ; caller's fp
+    0x7fff5fbfee48: [top + 8] <- 0x3bd364910f41; context
+    0x7fff5fbfee40: [top + 0] <- 0x3bd364910f79; function
+[deoptimizing (eager): end 0x3bd364910f79 enter @11 => node=3, pc=0x3bf87ada3506, state=NO_REGISTERS, alignment=no padding, took 0.017 ms]
+[removing optimized code for: enter]
+[deoptimize marked code in all contexts]
+[deoptimizer unlinked: HiddenClass.advance / c632bffd6b1]
+[deoptimizer unlinked: advanceHiddenClassPath / 3bd3650d60e9]
+[deoptimizer unlinked: Object_declare / c632bffd789]
+[deoptimizer unlinked: HiddenClass / 3bd365099399]
+[deoptimizer unlinked: traverse / 3961c17069c9]
+[deoptimizing (DEOPT lazy): begin 0x3961c17069c9 traverse (opt #141) @22, FP to SP delta: 288]
+  translating traverse => node=133, height=104
+    0x7fff5fbfef58: [top + 152] <- 0x3bd365004221 ; r8 0x3bd365004221 <a Controller with map 0x1e9d9b6ed09>
+    0x7fff5fbfef50: [top + 144] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfef48: [top + 136] <- 0x3bd365004289 ; rsi 0x3bd365004289 <an Object with map 0x1e9d9b6eb11>
+    0x7fff5fbfef40: [top + 128] <- 0x3bf87ada198a ; caller's pc
+    0x7fff5fbfef38: [top + 120] <- 0x7fff5fbfef80 ; caller's fp
+    0x7fff5fbfef30: [top + 112] <- 0x3bd365004149; context
+    0x7fff5fbfef28: [top + 104] <- 0x3961c17069c9; function
+    0x7fff5fbfef20: [top + 96] <- 0x3bd3650041e1 ; rdx 0x3bd3650041e1 <JS Array[13067]>
+    0x7fff5fbfef18: [top + 88] <- 0x3bd3650042c1 ; [sp + 128] 0x3bd3650042c1 <JS Array[6]>
+    0x7fff5fbfef10: [top + 80] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfef08: [top + 72] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfef00: [top + 64] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeef8: [top + 56] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeef0: [top + 48] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeee8: [top + 40] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeee0: [top + 32] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeed8: [top + 24] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeed0: [top + 16] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeec8: [top + 8] <- 0x3bd3650042a9 ; rax 0x3bd3650042a9 <an Object with map 0x2f17a7c08d81>
+    0x7fff5fbfeec0: [top + 0] <- 0x2010c6804121 <undefined> ; literal
+[deoptimizing (lazy): end 0x3961c17069c9 traverse @22 => node=133, pc=0x3bf87ada1cd7, state=NO_REGISTERS, alignment=no padding, took 0.074 ms]
+[deoptimizing (DEOPT eager): begin 0x3961c1706cd9 proto._pushFrame (opt #154) @14, FP to SP delta: 40]
+            ;;; jump table entry 12: deoptimization bailout 14.
+  translating proto._pushFrame => node=31, height=16
+    0x7fff5fbfef58: [top + 72] <- 0x3bd3650043e9 ; [sp + 80] 0x3bd3650043e9 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbfef50: [top + 64] <- 0x3bd365181279 ; rbx 0x3bd365181279 <JS Function visitBlock (SharedFunctionInfo 0x3961c170d531)>
+    0x7fff5fbfef48: [top + 56] <- 0x365e2ad44951 ; rcx 0x365e2ad44951 <an Object with map 0x2f17a7c1ccb9>
+    0x7fff5fbfef40: [top + 48] <- 0x2010c6804121 ; [sp + 56] 0x2010c6804121 <undefined>
+    0x7fff5fbfef38: [top + 40] <- 0x3bf87ac06e75 ; caller's pc
+    0x7fff5fbfef30: [top + 32] <- 0x7fff5fbfef78 ; caller's fp
+    0x7fff5fbfef28: [top + 24] <- 0x3bd365004599; context
+    0x7fff5fbfef20: [top + 16] <- 0x3961c1706cd9; function
+    0x7fff5fbfef18: [top + 8] <- 0x2010c6886821 <JS Function push (SharedFunctionInfo 0x2010c685b921)> ; literal
+    0x7fff5fbfef10: [top + 0] <- 0x3bd3651303d9 ; [sp + 8] 0x3bd3651303d9 <JS Array[1]>
+  translating construct stub => height=32
+    0x7fff5fbfef08: [top + 80] <- 0x3bd365814531 ; rdx 0x3bd365814531 <a Frame with map 0x1e9d9b6e889>
+    0x7fff5fbfef00: [top + 72] <- 0x3bd365181279 ; rbx 0x3bd365181279 <JS Function visitBlock (SharedFunctionInfo 0x3961c170d531)>
+    0x7fff5fbfeef8: [top + 64] <- 0x365e2ad44951 ; rcx 0x365e2ad44951 <an Object with map 0x2f17a7c1ccb9>
+    0x7fff5fbfeef0: [top + 56] <- 0x2010c6804181 ; rax 0x2010c6804181 <false>
+    0x7fff5fbfeee8: [top + 48] <- 0x3bf87ad8d8a2 ; caller's pc
+    0x7fff5fbfeee0: [top + 40] <- 0x7fff5fbfef30 ; caller's fp
+    0x7fff5fbfeed8: [top + 32] <- 0x3bd365004599 ; context
+    0x7fff5fbfeed0: [top + 24] <- 0x900000000 ; function (construct sentinel)
+    0x7fff5fbfeec8: [top + 16] <- 0x3bf87ac2c961 ; code object
+    0x7fff5fbfeec0: [top + 8] <- 0x300000000 ; argc (3)
+    0x7fff5fbfeeb8: [top + 0] <- 0x3bd365814531 ; allocated receiver
+  translating Frame => node=13, height=0
+    0x7fff5fbfeeb0: [top + 56] <- 0x3bd365814531 ; rdx 0x3bd365814531 <a Frame with map 0x1e9d9b6e889>
+    0x7fff5fbfeea8: [top + 48] <- 0x3bd365181279 ; rbx 0x3bd365181279 <JS Function visitBlock (SharedFunctionInfo 0x3961c170d531)>
+    0x7fff5fbfeea0: [top + 40] <- 0x365e2ad44951 ; rcx 0x365e2ad44951 <an Object with map 0x2f17a7c1ccb9>
+    0x7fff5fbfee98: [top + 32] <- 0x2010c6804181 ; rax 0x2010c6804181 <false>
+    0x7fff5fbfee90: [top + 24] <- 0x3bf87ac2cb64 ; caller's pc
+    0x7fff5fbfee88: [top + 16] <- 0x7fff5fbfeee0 ; caller's fp
+    0x7fff5fbfee80: [top + 8] <- 0x3bd365004599; context
+    0x7fff5fbfee78: [top + 0] <- 0x3bd3650ba3b9; function
+[deoptimizing (eager): end 0x3bd3650ba3b9 proto._pushFrame @14 => node=13, pc=0x3bf87ad8d98b, state=NO_REGISTERS, alignment=no padding, took 0.053 ms]
+[removing optimized code for: proto._pushFrame]
+[deoptimize marked code in all contexts]
+[deoptimizer unlinked: visitExpressionStatement / 3bd365181429]
+[deoptimizer unlinked: iterateProgram / 3bd365130729]
+[deoptimizer unlinked: cfg_next / 3961c1706ac1]
+[deoptimizer unlinked: Frame / 3bd3650ba3b9]
+[deoptimizing (DEOPT lazy): begin 0x3bd365130729 iterateProgram (opt #161) @21, FP to SP delta: 48]
+  translating iterateProgram => node=117, height=0
+    0x7fff5fbff028: [top + 40] <- 0x3bd3650043e9 ; [sp + 72] 0x3bd3650043e9 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbff020: [top + 32] <- 0x3bd3657d0d39 ; [sp + 64] 0x3bd3657d0d39 <an Object with map 0x1e9d9b6f381>
+    0x7fff5fbff018: [top + 24] <- 0x3bf87adcf459 ; caller's pc
+    0x7fff5fbff010: [top + 16] <- 0x7fff5fbff050 ; caller's fp
+    0x7fff5fbff008: [top + 8] <- 0x3bd3650044e9; context
+    0x7fff5fbff000: [top + 0] <- 0x3bd365130729; function
+[deoptimizing (lazy): end 0x3bd365130729 iterateProgram @21 => node=117, pc=0x3bf87adc7439, state=NO_REGISTERS, alignment=no padding, took 0.049 ms]
+[deoptimizing (DEOPT lazy): begin 0x3961c1706ac1 cfg_next (opt #156) @9, FP to SP delta: 32]
+  translating cfg_next => node=72, height=16
+    0x7fff5fbff060: [top + 48] <- 0x3bd3650043e9 ; [sp + 48] 0x3bd3650043e9 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbff058: [top + 40] <- 0x3bf87aca0266 ; caller's pc
+    0x7fff5fbff050: [top + 32] <- 0x7fff5fbff0a8 ; caller's fp
+    0x7fff5fbff048: [top + 24] <- 0x3bd365004599; context
+    0x7fff5fbff040: [top + 16] <- 0x3961c1706ac1; function
+    0x7fff5fbff038: [top + 8] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbff030: [top + 0] <- 0x3961c1706ac1 ; [sp + 0] 0x3961c1706ac1 <JS Function cfg_next (SharedFunctionInfo 0xc632bff7fb9)>
+[deoptimizing (lazy): end 0x3961c1706ac1 cfg_next @9 => node=72, pc=0x3bf87ad9d9ca, state=NO_REGISTERS, alignment=no padding, took 0.011 ms]
+[deoptimizing (DEOPT eager): begin 0xc632bffd981 proto.push (opt #165) @7, FP to SP delta: 48]
+            ;;; <@125,#105> branch
+  translating proto.push => node=14, height=24
+    0x7fff5fbfef98: [top + 72] <- 0x3bd3651304b9 ; [sp + 80] 0x3bd3651304b9 <a ValueStack with map 0x1e9d9b672f9>
+    0x7fff5fbfef90: [top + 64] <- 0x3bd365815f49 ; [sp + 72] 0x3bd365815f49 <a Value with map 0x1e9d9b6f891>
+    0x7fff5fbfef88: [top + 56] <- 0x2010c6804121 ; rax 0x2010c6804121 <undefined>
+    0x7fff5fbfef80: [top + 48] <- 0x3bf87ac06e75 ; caller's pc
+    0x7fff5fbfef78: [top + 40] <- 0x7fff5fbfefb8 ; caller's fp
+    0x7fff5fbfef70: [top + 32] <- 0x3bd365099da9; context
+    0x7fff5fbfef68: [top + 24] <- 0xc632bffd981; function
+    0x7fff5fbfef60: [top + 16] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfef58: [top + 8] <- 0x3bd365180611 ; [sp + 16] 0x3bd365180611 <JS Function Value (SharedFunctionInfo 0xc632bffca09)>
+    0x7fff5fbfef50: [top + 0] <- 4 ; rbx (smi)
+[deoptimizing (eager): end 0xc632bffd981 proto.push @7 => node=14, pc=0x3bf87adc7f97, state=NO_REGISTERS, alignment=no padding, took 0.022 ms]
+[removing optimized code for: proto.push]
+[deoptimizing (DEOPT eager): begin 0x3961c1706c71 proto._connect (opt #160) @4, FP to SP delta: 48]
+            ;;; jump table entry 3: deoptimization bailout 4.
+  translating proto._connect => node=3, height=0
+    0x7fff5fbfef58: [top + 48] <- 0x3bd3650043e9 ; rbx 0x3bd3650043e9 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbfef50: [top + 40] <- 0x3bd365819499 ; [sp + 72] 0x3bd365819499 <an Object with map 0x1e9d9b6f849>
+    0x7fff5fbfef48: [top + 32] <- 0x3bd365819749 ; [sp + 64] 0x3bd365819749 <an Object with map 0x2f17a7c1ca31>
+    0x7fff5fbfef40: [top + 24] <- 0x3bf87ad9fe2d ; caller's pc
+    0x7fff5fbfef38: [top + 16] <- 0x7fff5fbfef88 ; caller's fp
+    0x7fff5fbfef30: [top + 8] <- 0x3bd365004599; context
+    0x7fff5fbfef28: [top + 0] <- 0x3961c1706c71; function
+[deoptimizing (eager): end 0x3961c1706c71 proto._connect @4 => node=3, pc=0x3bf87ada13e6, state=NO_REGISTERS, alignment=no padding, took 0.019 ms]
+[removing optimized code for: proto._connect]
+[deoptimizing (DEOPT eager): begin 0x3bd3651810c9 visitLiteral (opt #163) @29, FP to SP delta: 88]
+            ;;; jump table entry 24: deoptimization bailout 29.
+  translating visitLiteral => node=22, height=8
+    0x7fff5fbff020: [top + 48] <- 0x3bd3650043e9 ; rcx 0x3bd3650043e9 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbff018: [top + 40] <- 0x2c5485eb3261 ; [sp + 104] 0x2c5485eb3261 <an Object with map 0x2f17a7c1c7a9>
+    0x7fff5fbff010: [top + 32] <- 0x3bf87ad9d9c2 ; caller's pc
+    0x7fff5fbff008: [top + 24] <- 0x7fff5fbff050 ; caller's fp
+    0x7fff5fbff000: [top + 16] <- 0x3bd365181a11; context
+    0x7fff5fbfeff8: [top + 8] <- 0x3bd3651810c9; function
+    0x7fff5fbfeff0: [top + 0] <- 0x3961c1706df9 <JS Function cfg_pushValue (SharedFunctionInfo 0xc632bff8781)> ; literal
+  translating arguments adaptor => height=24
+    0x7fff5fbfefe8: [top + 56] <- 0x3bd3650043e9 ; rcx 0x3bd3650043e9 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbfefe0: [top + 48] <- 0x200000000 ; [sp + 64] 2
+    0x7fff5fbfefd8: [top + 40] <- 0x2010c6804161 <true> ; literal
+    0x7fff5fbfefd0: [top + 32] <- 0x3bf87adc7bde ; caller's pc
+    0x7fff5fbfefc8: [top + 24] <- 0x7fff5fbff008 ; caller's fp
+    0x7fff5fbfefc0: [top + 16] <- 0xa00000000 ; context (adaptor sentinel)
+    0x7fff5fbfefb8: [top + 8] <- 0x3961c1706df9 ; function
+    0x7fff5fbfefb0: [top + 0] <- 0x200000000 ; argc (2)
+  translating cfg_pushValue => node=94, height=16
+    0x7fff5fbfefa8: [top + 72] <- 0x3bd3650043e9 ; rcx 0x3bd3650043e9 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbfefa0: [top + 64] <- 0x200000000 ; [sp + 64] 2
+    0x7fff5fbfef98: [top + 56] <- 0x2010c6804161 <true> ; literal
+    0x7fff5fbfef90: [top + 48] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfef88: [top + 40] <- 0x3bf87ac06e75 ; caller's pc
+    0x7fff5fbfef80: [top + 32] <- 0x7fff5fbfefc8 ; caller's fp
+    0x7fff5fbfef78: [top + 24] <- 0x3bd365004599; context
+    0x7fff5fbfef70: [top + 16] <- 0x3961c1706df9; function
+    0x7fff5fbfef68: [top + 8] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfef60: [top + 0] <- 0x3961c1706c71 <JS Function proto._connect (SharedFunctionInfo 0xc632bff83d1)> ; literal
+  translating proto._connect => node=2, height=0
+    0x7fff5fbfef58: [top + 48] <- 0x3bd3650043e9 ; rcx 0x3bd3650043e9 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbfef50: [top + 40] <- 0x3bd365819749 ; [sp + 48] 0x3bd365819749 <an Object with map 0x2f17a7c1ca31>
+    0x7fff5fbfef48: [top + 32] <- 0x3bd365819cf9 ; rbx 0x3bd365819cf9 <an Object with map 0x1e9d9b6f771>
+    0x7fff5fbfef40: [top + 24] <- 0x3bf87adc7e78 ; caller's pc
+    0x7fff5fbfef38: [top + 16] <- 0x7fff5fbfef80 ; caller's fp
+    0x7fff5fbfef30: [top + 8] <- 0x3bd365004599; context
+    0x7fff5fbfef28: [top + 0] <- 0x3961c1706c71; function
+[deoptimizing (eager): end 0x3961c1706c71 visitLiteral @29 => node=2, pc=0x3bf87ada13e6, state=NO_REGISTERS, alignment=no padding, took 0.068 ms]
+[removing optimized code for: visitLiteral]
+[deoptimizing (DEOPT eager): begin 0x3bd3652d8ef1 afterExpression (opt #168) @8, FP to SP delta: 56]
+            ;;; jump table entry 7: deoptimization bailout 8.
+  translating afterExpression => node=33, height=8
+    0x7fff5fbff020: [top + 48] <- 0x3bd3650043e9 ; rbx 0x3bd3650043e9 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbff018: [top + 40] <- 0x365e2adb2bd9 ; [sp + 72] 0x365e2adb2bd9 <an Object with map 0x2f17a7c1c569>
+    0x7fff5fbff010: [top + 32] <- 0x3bf87ad9d9c2 ; caller's pc
+    0x7fff5fbff008: [top + 24] <- 0x7fff5fbff050 ; caller's fp
+    0x7fff5fbff000: [top + 16] <- 0x3bd365182549; context
+    0x7fff5fbfeff8: [top + 8] <- 0x3bd3652d8ef1; function
+    0x7fff5fbfeff0: [top + 0] <- 0x3961c1706c71 <JS Function proto._connect (SharedFunctionInfo 0xc632bff83d1)> ; literal
+  translating proto._connect => node=2, height=0
+    0x7fff5fbfefe8: [top + 48] <- 0x3bd3650043e9 ; rbx 0x3bd3650043e9 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbfefe0: [top + 40] <- 0x3bd365819cf9 ; rcx 0x3bd365819cf9 <an Object with map 0x1e9d9b6f771>
+    0x7fff5fbfefd8: [top + 32] <- 0x3bd365819da9 ; rdi 0x3bd365819da9 <an Object with map 0x1e9d9b6f849>
+    0x7fff5fbfefd0: [top + 24] <- 0x3bf87adc9285 ; caller's pc
+    0x7fff5fbfefc8: [top + 16] <- 0x7fff5fbff008 ; caller's fp
+    0x7fff5fbfefc0: [top + 8] <- 0x3bd365004599; context
+    0x7fff5fbfefb8: [top + 0] <- 0x3961c1706c71; function
+[deoptimizing (eager): end 0x3961c1706c71 afterExpression @8 => node=2, pc=0x3bf87ada13e6, state=NO_REGISTERS, alignment=no padding, took 0.025 ms]
+[removing optimized code for: afterExpression]
+[deoptimizing (DEOPT eager): begin 0x3961c1706df9 cfg_pushValue (opt #164) @31, FP to SP delta: 88]
+            ;;; jump table entry 23: deoptimization bailout 31.
+  translating cfg_pushValue => node=94, height=16
+    0x7fff5fbfefa8: [top + 72] <- 0x3bd3650043e9 ; rcx 0x3bd3650043e9 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbfefa0: [top + 64] <- 0x300000000 ; [sp + 120] 3
+    0x7fff5fbfef98: [top + 56] <- 0x2010c6804161 ; [sp + 112] 0x2010c6804161 <true>
+    0x7fff5fbfef90: [top + 48] <- 0x2010c6804121 ; [sp + 104] 0x2010c6804121 <undefined>
+    0x7fff5fbfef88: [top + 40] <- 0x3bf87ac06e75 ; caller's pc
+    0x7fff5fbfef80: [top + 32] <- 0x7fff5fbfefc8 ; caller's fp
+    0x7fff5fbfef78: [top + 24] <- 0x3bd365004599; context
+    0x7fff5fbfef70: [top + 16] <- 0x3961c1706df9; function
+    0x7fff5fbfef68: [top + 8] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfef60: [top + 0] <- 0x3961c1706c71 <JS Function proto._connect (SharedFunctionInfo 0xc632bff83d1)> ; literal
+  translating proto._connect => node=2, height=0
+    0x7fff5fbfef58: [top + 48] <- 0x3bd3650043e9 ; rcx 0x3bd3650043e9 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbfef50: [top + 40] <- 0x3bd36581a0e9 ; [sp + 48] 0x3bd36581a0e9 <an Object with map 0x2f17a7c1ca31>
+    0x7fff5fbfef48: [top + 32] <- 0x3bd36581a7c9 ; rbx 0x3bd36581a7c9 <an Object with map 0x1e9d9b6f771>
+    0x7fff5fbfef40: [top + 24] <- 0x3bf87adc7e78 ; caller's pc
+    0x7fff5fbfef38: [top + 16] <- 0x7fff5fbfef80 ; caller's fp
+    0x7fff5fbfef30: [top + 8] <- 0x3bd365004599; context
+    0x7fff5fbfef28: [top + 0] <- 0x3961c1706c71; function
+[deoptimizing (eager): end 0x3961c1706c71 cfg_pushValue @31 => node=2, pc=0x3bf87ada13e6, state=NO_REGISTERS, alignment=no padding, took 0.034 ms]
+[removing optimized code for: cfg_pushValue]
+[deoptimizing (DEOPT eager): begin 0xc632bffd789 Object_declare (opt #149) @2, FP to SP delta: 72]
+            ;;; jump table entry 1: deoptimization bailout 2.
+  translating Object_declare => node=3, height=16
+    0x7fff5fbfef08: [top + 56] <- 0x3bd36582d001 ; rax 0x3bd36582d001 <an ObjectValue with map 0x1e9d9b67221>
+    0x7fff5fbfef00: [top + 48] <- 0x00000000 ; [sp + 88] 0
+    0x7fff5fbfeef8: [top + 40] <- 0x3bf87adf8dcc ; caller's pc
+    0x7fff5fbfeef0: [top + 32] <- 0x7fff5fbfef48 ; caller's fp
+    0x7fff5fbfeee8: [top + 24] <- 0x3bd365099651; context
+    0x7fff5fbfeee0: [top + 16] <- 0xc632bffd789; function
+    0x7fff5fbfeed8: [top + 8] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeed0: [top + 0] <- 0x2010c6804141 <the hole> ; literal
+[deoptimizing (eager): end 0xc632bffd789 Object_declare @2 => node=3, pc=0x3bf87adaad94, state=NO_REGISTERS, alignment=no padding, took 0.023 ms]
+[removing optimized code for: Object_declare]
+[deoptimize marked code in all contexts]
+[deoptimizer unlinked: visitedBody / 15d0b678ee81]
+[deoptimizer unlinked: iterateObject / 8b47f290a49]
+[deoptimizer unlinked: visitForInStatement / 15d0b678ebb1]
+[deoptimizer unlinked: visitTryStatement / 15d0b678efd9]
+[deoptimizer unlinked: visitedRight / 15d0b67f6169]
+[deoptimizer unlinked: visitedInit / 8b47f2917b1]
+[deoptimizer unlinked: visitDoWhileStatement / 15d0b678eb69]
+[deoptimizer unlinked: visitedRight / 8b47f28feb1]
+[deoptimizer unlinked: visitedArgument / 15d0b67f6049]
+[deoptimizer unlinked: visitIdentifier / 15d0b678ec89]
+[deoptimizer unlinked: iterateArray / 8b47f28fd41]
+[deoptimizer unlinked: proto._createUnreachable / 3961c1706f99]
+[deoptimizer unlinked: visitedDiscriminant / 15d0b678ee39]
+[deoptimizer unlinked: visitSwitchStatement / 15d0b678ead9]
+[deoptimizer unlinked: visitedTest / 8b47f291409]
+[deoptimizer unlinked: visitBlock / 15d0b678ed19]
+[deoptimizer unlinked: cfg_pushBlock / 3961c1706d21]
+[deoptimizer unlinked: proto.pushState / c632bff9c79]
+[deoptimizer unlinked: iterateSequenceExpressionPost / 8b47f290b69]
+[deoptimizer unlinked: iterateBlock / 386888bdc241]
+[deoptimizer unlinked: afterExpression / 15d0b678ed61]
+[deoptimizer unlinked: cfg_pushValue / 3961c1706df9]
+[deoptimizer unlinked: visitLiteral / 15d0b678e809]
+[deoptimizer unlinked: proto._connect / 3961c1706c71]
+[deoptimizer unlinked: proto._popValue / 3961c1706e61]
+[deoptimize marked code in all contexts]
+[deoptimizing (DEOPT eager): begin 0x8b47f291961 visitedArgument (opt #298) @19, FP to SP delta: 104]
+            ;;; jump table entry 17: deoptimization bailout 19.
+  translating visitedArgument => node=43, height=32
+    0x7fff5fbff028: [top + 72] <- 0x386888bdc189 ; [sp + 128] 0x386888bdc189 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbff020: [top + 64] <- 0x29ce193bb3f1 ; [sp + 120] 0x29ce193bb3f1 <an Object with map 0x2f17a7c1e339>
+    0x7fff5fbff018: [top + 56] <- 0x3bf87ad3f839 ; caller's pc
+    0x7fff5fbff010: [top + 48] <- 0x7fff5fbff050 ; caller's fp
+    0x7fff5fbff008: [top + 40] <- 0x15d0b67e0601; context
+    0x7fff5fbff000: [top + 32] <- 0x8b47f291961; function
+    0x7fff5fbfeff8: [top + 24] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfeff0: [top + 16] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfefe8: [top + 8] <- 0x2010c6804121 <undefined> ; literal
+    0x7fff5fbfefe0: [top + 0] <- 0x3961c1706c71 <JS Function proto._connect (SharedFunctionInfo 0xc632bff83d1)> ; literal
+  translating proto._connect => node=59, height=24
+    0x7fff5fbfefd8: [top + 72] <- 0x386888bdc189 ; [sp + 128] 0x386888bdc189 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbfefd0: [top + 64] <- 0x3fe68f2f8079 ; [sp + 72] 0x3fe68f2f8079 <an Object with map 0x1e9d9b6fbf1>
+    0x7fff5fbfefc8: [top + 56] <- 0x3bd3657f7c01 ; [sp + 64] 0x3bd3657f7c01 <an Object with map 0x1e9d9b70731>
+    0x7fff5fbfefc0: [top + 48] <- 0x3bf87ad2e5f0 ; caller's pc
+    0x7fff5fbfefb8: [top + 40] <- 0x7fff5fbff010 ; caller's fp
+    0x7fff5fbfefb0: [top + 32] <- 0x386888bdc0e9; context
+    0x7fff5fbfefa8: [top + 24] <- 0x3961c1706c71; function
+    0x7fff5fbfefa0: [top + 16] <- 0x2010c6886821 <JS Function push (SharedFunctionInfo 0x2010c685b921)> ; literal
+    0x7fff5fbfef98: [top + 8] <- 0x386888bdc169 ; rax 0x386888bdc169 <JS Array[113827]>
+    0x7fff5fbfef90: [top + 0] <- 0x3fe68f2f80d9 ; rbx 0x3fe68f2f80d9 <an Object with map 0x1e9d9b6ea81>
+[deoptimizing (eager): end 0x3961c1706c71 visitedArgument @19 => node=59, pc=0x3bf87ada154d, state=NO_REGISTERS, alignment=no padding, took 0.063 ms]
+[removing optimized code for: visitedArgument]
+[deoptimizing (DEOPT soft): begin 0x15d0b678eda9 iterateProgram (opt #184) @30, FP to SP delta: 48]
+            ;;; deoptimize: Insufficient type feedback for generic named access
+  translating iterateProgram => node=56, height=32
+    0x7fff5fbff028: [top + 72] <- 0x386888bdc189 ; [sp + 72] 0x386888bdc189 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbff020: [top + 64] <- 0x30962d3fdf31 ; [sp + 64] 0x30962d3fdf31 <an Object with map 0x1e9d9b6f381>
+    0x7fff5fbff018: [top + 56] <- 0x3bf87ad3f839 ; caller's pc
+    0x7fff5fbff010: [top + 48] <- 0x7fff5fbff050 ; caller's fp
+    0x7fff5fbff008: [top + 40] <- 0x15d0b67e0319; context
+    0x7fff5fbff000: [top + 32] <- 0x15d0b678eda9; function
+    0x7fff5fbfeff8: [top + 24] <- 0x3961c1706c71 ; [sp + 0] 0x3961c1706c71 <JS Function proto._connect (SharedFunctionInfo 0xc632bff83d1)>
+    0x7fff5fbfeff0: [top + 16] <- 0x386888bdc189 ; [sp + 72] 0x386888bdc189 <a CFGFactory with map 0x1e9d9b67731>
+    0x7fff5fbfefe8: [top + 8] <- 0x16a6c485f0a9 ; [sp + 16] 0x16a6c485f0a9 <an Object with map 0x1e9d9b6f849>
+    0x7fff5fbfefe0: [top + 0] <- 0x8b47f2ac2d9 ; rax 0x8b47f2ac2d9 <a Block with map 0x1e9d9b67971>
+[deoptimizing (soft): end 0x15d0b678eda9 iterateProgram @30 => node=56, pc=0x3bf87adc72fd, state=TOS_REG, alignment=no padding, took 0.042 ms]
+[removing optimized code for: iterateProgram]

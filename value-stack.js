@@ -2,34 +2,27 @@ module.exports = ValueStack
 
 var typeOf = require('./lib/types.js')
 
-var ObjectValue = require('./lib/object.js')
-var Value = require('./lib/value.js')
+var hidden = require('./lib/values/hidden-class.js')
+var ObjectValue = require('./lib/values/object.js')
 
-function ValueStack() {
+function ValueStack(builtins) {
   if (!(this instanceof ValueStack)) {
-    return new ValueStack
+    return new ValueStack(builtins)
   }
 
   this._values = []
+  this._builtins = builtins
 }
 
 var cons = ValueStack
 var proto = cons.prototype
 
-proto.push = function (value, isStatic) {
-  var wrapped = new Value(
-    typeOf(value) | (isStatic ? typeOf.STATIC : 0),
-    value
-  )
-  this._values.push(wrapped)
+proto.push = function (value) {
+  this._values.push(value)
 }
 
 proto.pushHole = function() {
   this._values.push(null)
-}
-
-proto.pushKey = function(key) {
-  this._values.push(key)
 }
 
 proto.pop = function () {
@@ -43,7 +36,7 @@ proto.current = function () {
 
 proto.toArray = function(len) {
   var values = this._values.slice(-len)
-  var objectValue = new ObjectValue(typeOf.OBJECT, ObjectValue.HCI_ARRAY, null)
+  var objectValue = new ObjectValue(this._builtins, hidden.initial.ARRAY, this._builtins.newprop('[[ArrayProto]]').value())
   this._values.length -= len
   var isStatic = true
 
@@ -52,7 +45,7 @@ proto.toArray = function(len) {
       continue
     }
 
-    objectValue.declare(i).assign(values[i])
+    objectValue.newprop(i).assign(values[i])
     if (isStatic && (values[i].type & typeOf.STATIC) === 0) {
       isStatic = false
     }
@@ -65,14 +58,14 @@ proto.toArray = function(len) {
   this._values.push(objectValue)
 }
 
-proto.toObject = function(len) {
+proto.toObject = function(len, builtins) {
   var values = len ? this._values.slice(len * -2) : []
-  var objectValue = new ObjectValue(typeOf.OBJECT, ObjectValue.HCI_EMPTY, null)
+  var objectValue = new ObjectValue(builtins, hidden.initial.EMPTY, this._builtins.newprop('[[ObjectProto]]').value())
   this._values.length -= len * 2
   var isStatic = true
 
   for (var i = 0, len = values.length; i < len; i += 2) {
-    objectValue.declare(values[i]).assign(values[i + 1])
+    objectValue.newprop(values[i]).assign(values[i + 1])
     if (isStatic && (values[i + 1].type & typeOf.STATIC) === 0) {
       isStatic = false
     }

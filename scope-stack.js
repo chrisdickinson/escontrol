@@ -2,18 +2,19 @@
 
 module.exports = ScopeStack
 
-var WrappedObject = require('./lib/wrapped-object.js')
-var ObjectValue = require('./lib/object.js')
-var typeOf = require('./lib/types.js')
+var WrappedValue = require('./lib/values/value-wrapped.js')
+var hidden = require('./lib/values/hidden-class.js')
+var ObjectValue = require('./lib/values/object.js')
 
-function ScopeStack(root) {
+function ScopeStack(root, builtins) {
   if(!(this instanceof ScopeStack)) {
-    return new ScopeStack(root)
+    return new ScopeStack(root, builtins)
   }
 
   this._root = root
   this._current = root
   this._root._blockType = 'Program'
+  this._builtins = builtins
 }
 
 var proto = ScopeStack.prototype
@@ -23,13 +24,14 @@ proto.current = function() {
 }
 
 proto.push = function(block) {
-  this._current = new ObjectValue(typeOf.OBJECT, ObjectValue.HCI_EMPTY, this._current, null)
+  this._current = new ObjectValue(this._builtins, hidden.initial.EMPTY, this._current)
   this._current._blockType = block.type
   this._root = this._root || this._current
+
 }
 
 proto.pushBranch = function(branchID) {
-  this._current = new WrappedObject(this._current, branchID, this._current)
+  this._current = new WrappedValue(this._current, branchID, this._current)
   this._current._blockType = '(Branch)'
 }
 
@@ -41,7 +43,7 @@ proto.root = function() {
   return this._root
 }
 
-proto.declare = function(str, kind) {
+proto.newprop = function(str, kind) {
   if (kind === 'imaginary') {
     var current = this._current
     while (current) { 
@@ -53,11 +55,11 @@ proto.declare = function(str, kind) {
     if (!current) {
       throw new Error('out of blocks: ' + str + ' looking for ' + kind)
     }
-    return current.declare(str)
+    return current.newprop(str)
   }
 
   if (kind !== 'var') {
-    return this._current.declare(str)
+    return this._current.newprop(str)
   }
 
   var current = this._current
@@ -77,9 +79,9 @@ proto.declare = function(str, kind) {
     if (okay) current = current._prototype
   } while(current && okay)
 
-  return current.declare(str)
+  return current.newprop(str)
 }
 
-proto.lookup = function(str, immediate) {
-  return this._current.lookup(str, immediate)
+proto.getprop = function(str, immediate) {
+  return this._current.getprop(str, immediate)
 }

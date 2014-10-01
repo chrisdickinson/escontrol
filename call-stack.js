@@ -35,3 +35,7 @@ var proto = Frame.prototype
 proto.getThis = function() {
   return this._thisValue
 }
+
+proto.getArguments = function() {
+
+}

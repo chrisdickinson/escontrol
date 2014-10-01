@@ -2,13 +2,13 @@
 
 module.exports = CFGFactory
 
+var hidden = require('./lib/values/hidden-class.js')
+var ObjectValue = require('./lib/values/object.js')
 var createBlockStack = require('./block-stack.js')
 var createValueStack = require('./value-stack.js')
 var createScopeStack = require('./scope-stack.js')
 var createCallStack = require('./call-stack.js')
-var ObjectValue = require('./lib/object.js')
-var typeOf = require('./lib/types.js')
-
+var makeBuiltins = require('./builtins.js')
 var estraverse = require('estraverse')
 
 function CFGFactory(node) {
@@ -19,12 +19,13 @@ function CFGFactory(node) {
   this._stack = []
   this._graphs = []
   this._lastNode = null
-  this._global = new ObjectValue(typeOf.OBJECT, ObjectValue.HCI_EMPTY)
-  this._valueStack = createValueStack()
+  this._builtins = makeBuiltins()
+  this._global = new ObjectValue(this._builtins, hidden.initial.EMPTY, null)
+  this._valueStack = createValueStack(this._builtins)
   this._blockStack = null
   this._blockStacks = []
   this._pushBlockStack()
-  this._scopeStack = createScopeStack(this._global)
+  this._scopeStack = createScopeStack(this._global, this._builtins)
   this._callStack = createCallStack()
   this._connectionKind = []
   this._nodes = []
@@ -263,7 +264,7 @@ proto._hoist = function cfg_hoist(inputNode) {
   // already declared all of the hoisted names before
   // visiting the function body.
   for (var i = 0, len = items.length; i < len; ++i) {
-    var name = this._scopeStack.lookup(items[i].id.name)
+    var name = this._scopeStack.getprop(items[i].id.name)
     name.assign(this.visitFunctionExpression(items[i]))
   }
 
@@ -271,7 +272,7 @@ proto._hoist = function cfg_hoist(inputNode) {
     if (node.type === 'VariableDeclaration') {
       self._hoistVariableDeclaration(node)
     } else if (node.type === 'FunctionDeclaration' && node !== inputNode) {
-      self._scopeStack.declare(node.id.name, 'var')
+      self._scopeStack.newprop(node.id.name, 'var')
       items.push(node)
     }
     
@@ -283,7 +284,7 @@ proto._hoist = function cfg_hoist(inputNode) {
 
 proto._hoistVariableDeclaration = function(node) {
   for(var i = 0, len = node.declarations.length; i < len; ++i) {
-    this._scopeStack.declare(node.declarations[i].id.name, node.kind)
+    this._scopeStack.newprop(node.declarations[i].id.name, node.kind)
   }
 }
 
@@ -291,10 +292,21 @@ proto._currentCallFrame = function() {
   return this._callStack.current()
 }
 
-function Frame(fn, context, isLValue) {
+proto._getEdgesTo = function(node) {
+  var out = []
+  for(var i = 0, len = this._edges.length; i < len; ++i) {
+    if (this._edges[i].to === node) {
+      out.push(this._edges[i])
+    }
+  }
+  return out
+}
+
+function Frame(fn, context, isLValue, isStrict) {
   this.fn = fn
   this.context = context
   this.isLValue = isLValue
+  this.isStrict = isStrict
 }
 
 require('./lib/visit-expr-array.js')(proto)
