@@ -122,7 +122,7 @@ proto._connect = function(from, to, retainValue) {
 }
 
 proto._pushFrame = function(fn, context, isLValue) {
-  this._stack.push(new Frame(fn, context, Boolean(isLValue)))
+  this._stack.push(new Frame(fn, context, Boolean(isLValue), this._blockStack.current()))
 }
 
 proto._pushBlock = function cfg_pushBlock(node, hasException, finalizerNode) {
@@ -307,11 +307,32 @@ proto._getEdgesTo = function(node) {
   return out
 }
 
-function Frame(fn, context, isLValue, isStrict) {
+proto._unwind = function() {
+  var frame
+
+  for (var i = this._stack.length - 1; i > -1; --i) {
+    frame = this._stack[i]
+    if (frame.fn.unwindTarget) {
+      break
+    }
+  }
+
+  if (i === -1) {
+    throw new Error('unwound too much')
+  }
+
+  this._stack.splice(i + 1, this._stack.length - 1)
+
+  while(this._blockStack.current() !== frame.block) {
+    this._blockStack.pop()
+  }
+}
+
+function Frame(fn, context, isLValue, block) {
   this.fn = fn
+  this.block = block
   this.context = context
   this.isLValue = isLValue
-  this.isStrict = isStrict
 }
 
 require('./lib/visit-expr-array.js')(proto)
@@ -349,8 +370,4 @@ require('./lib/visit-expr-new.js')(proto)
 if(false) {
 require('./lib/visit-stmt-for-of.js')(proto)
 require('./lib/visit-stmt-with.js')(proto)
-}
-
-if(false) {
-require('./lib/visit-expr-new.js')(proto)
 }
