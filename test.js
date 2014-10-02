@@ -32,6 +32,14 @@ while(cfg.advance()) {
     now = dt
 }
 
+var attrs = cfg.global()._attributes
+Object.keys(attrs).forEach(function(xs) {
+  console.log(xs, '=', attrs[xs]._value.classInfo())
+})
+
+console.log(cfg._edges.length)
+
+
 if(false)
 setImmediate(function iter() {
   var dt = Date.now()
