@@ -7689,7 +7689,7 @@ jQuery.fn.delay = function( time, type ) {
 };
 
 
-(function() {
+(function things() {
 	var a, input, select, opt,
 		div = document.createElement("div" );
 

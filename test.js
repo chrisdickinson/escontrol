@@ -3,7 +3,6 @@ var esprima = require('esprima')
   , fs = require('fs')
 
 var pretty = require('pretty-bytes')
-var heapdump = require('heapdump')
 
 var ast = esprima.parse(
     fs.readFileSync(process.argv[2], 'utf8')
@@ -16,10 +15,29 @@ var cfg = require('./index.js')(ast)
 
 cfg.global().newprop('window').assign(cfg.global())
 
+i = 0
+
+var now = Date.now(), dt
+while(cfg.advance()) {
+    dt = Date.now()
+    if(false) console.log(
+        dt - now,
+        cfg._callStack.info(),
+        pretty(process.memoryUsage().heapUsed),
+        cfg._stack[cfg._stack.length - 1].fn.name,
+        cfg._stack[cfg._stack.length - 1].context.loc &&
+        cfg._stack[cfg._stack.length - 1].context.loc.start.line
+
+    )
+    now = dt
+}
+
+if(false)
 setImmediate(function iter() {
   var dt = Date.now()
   if (cfg.advance()) {
-    if (Date.now() - dt > 4000) {
+    dt = Date.now() - dt
+    if (false && Date.now() - dt > 4000) {
       console.log('dumping...')
       heapdump.writeSnapshot(function () {
         process.exit()
@@ -30,8 +48,15 @@ setImmediate(function iter() {
     
     }
 
+    console.log(
+        dt,
+        cfg._callStack.info(),
+        pretty(process.memoryUsage().heapUsed),
+        cfg._stack[cfg._stack.length - 1].fn.name,
+        cfg._stack[cfg._stack.length - 1].context.loc &&
+        cfg._stack[cfg._stack.length - 1].context.loc.start.line
 
-    console.log('〉', pretty(process.memoryUsage().rss), cfg._stack[cfg._stack.length - 1].context.loc)
+    )
   } else {
     cfg._edges.map(function(xs) {
       // console.log(xs)

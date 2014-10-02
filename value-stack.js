@@ -10,6 +10,8 @@ function ValueStack(builtins) {
   }
 
   this._values = []
+  this._fence = {at: -1}
+  this._fence.prev = this._fence
   this._builtins = builtins
 }
 
@@ -25,12 +27,24 @@ proto.pushHole = function() {
 }
 
 proto.pop = function () {
+  if (this._values.length - 1 < this._fence.at) {
+    throw new Error('crossed fence!')
+  }
+
   return this._values.pop()
 }
 
 proto.current = function () {
   var last = this._values[this._values.length - 1]
   return last
+}
+
+proto.fence = function() {
+  this._fence = {at: this._values.length, prev: this._fence}
+}
+
+proto.unfence = function() {
+  this._fence = this._fence.prev
 }
 
 proto.toArray = function(len) {
@@ -40,6 +54,10 @@ proto.toArray = function(len) {
   if (len) {
     var values = this._values.slice(-len)
     this._values.length -= len
+
+    if (this._values.length < this._fence.at) {
+      throw new Error('crossed fence!')
+    }
 
     for (var i = 0, len = values.length; i < len; ++i) {
       if (!values[i]) {
@@ -60,6 +78,10 @@ proto.toObject = function(len, builtins) {
     var values = len ? this._values.slice(len * -2) : []
     this._values.length -= len * 2
     var isStatic = true
+
+    if (this._values.length < this._fence.at) {
+      throw new Error('crossed fence!')
+    }
 
     for (var i = 0, len = values.length; i < len; i += 2) {
       objectValue.newprop(values[i]).assign(values[i + 1])

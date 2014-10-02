@@ -35,7 +35,7 @@ function CFGFactory(node) {
   this._branchID = 1
 
   this._blockStack.pushState(node, [], true)
-  this._callStack.pushFrame(this._global, [], false, this._blockStack.current())
+  this._callStack.pushFrame(null, this._global, [], false, this._blockStack.current())
   this._pushFrame(this._visit, node)
 }
 
@@ -270,6 +270,7 @@ proto._hoist = function cfg_hoist(inputNode) {
   for (var i = 0, len = items.length; i < len; ++i) {
     var name = this._scopeStack.getprop(items[i].id.name)
     name.assign(this.visitFunctionExpression(items[i]))
+    this._valueStack.pop()
   }
 
   function enter(node, parent) {
