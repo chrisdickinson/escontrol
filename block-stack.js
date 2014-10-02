@@ -21,7 +21,7 @@ proto.root = function() {
 
 proto.pushState = function (node, labels, hasException, finalizer) {
   this._block = new Block(this._block, node, labels, hasException ? {
-    type: 'exception'
+    operation: 'exception'
   } : null, finalizer || null)
   this._root = this._root || this._block
 }
@@ -40,8 +40,8 @@ function Block(parent, astNode, labels, exc, finalizer) {
   this.labels = labels.slice()
   this.finalizer = finalizer || null
 
-  this.enter = {type: 'enter ' + astNode.type}
-  this.exit = {type: 'exit ' + astNode.type}
+  this.enter = {operation: 'enter ' + astNode.type}
+  this.exit = {operation: 'exit ' + astNode.type}
   this.exception = exc || null
 }
 
