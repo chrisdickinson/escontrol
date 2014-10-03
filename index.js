@@ -2,11 +2,12 @@
 
 module.exports = CFGFactory
 
+var SharedFunctionInfo = require('./lib/values/shared-function-info.js')
 var hidden = require('./lib/values/hidden-class.js')
 var ObjectValue = require('./lib/values/object.js')
-var createBlockStack = require('./block-stack.js')
 var createValueStack = require('./value-stack.js')
 var createScopeStack = require('./scope-stack.js')
+var createBlockStack = require('./block-stack.js')
 var createCallStack = require('./call-stack.js')
 var makeBuiltins = require('./builtins.js')
 var Operation = require('./operation.js')
@@ -30,7 +31,6 @@ function CFGFactory(node) {
   this._scopeStack = createScopeStack(this._global, this._builtins)
   this._callStack = createCallStack()
   this._connectionKind = []
-  this._nodes = []
   this._edges = []
   this._labels = []
 
@@ -39,6 +39,7 @@ function CFGFactory(node) {
   this._blockStack.pushState(node, [], true)
   this._callStack.pushFrame(null, this._global, [], false, this._blockStack.current())
   this._pushFrame(this._visit, node)
+  this._initSharedFunctionInfo()
 }
 
 var cons = CFGFactory
@@ -161,9 +162,6 @@ proto._pushBlock = function cfg_pushBlock(node, hasException, finalizerNode) {
   var current = this._blockStack.current()
 
   var last = this.last()
-
-  this._nodes.push(current.enter)
-  this._nodes.push(current.exit)
 
   if (current.exception) {
     this._connect(this._createUnreachable(), current.exception)
@@ -306,9 +304,46 @@ var FUNCTIONS = {
   , 'ArrowExpression': true
 }
 
+var hasMap = typeof Map !== 'undefined'
+
+proto._initSharedFunctionInfo = hasMap ?
+function() {
+  this._sharedFunctionInfo = new Map()
+} : function() {
+  this._sharedFunctionInfoNodes = []
+  this._sharedFunctionInfo = []
+}
+
+proto._getSharedFunctionInfo = hasMap ? function(node) {
+  var sfi = this._sharedFunctionInfo.get(node)
+  if (!sfi) {
+    sfi = new SharedFunctionInfo(node)
+    this._sharedFunctionInfo.set(node, sfi)
+  }
+
+  return sfi
+} : function(node) {
+  var idx = this._sharedFunctionInfoNodes.indexOf(node)
+
+  // XXX: replace with Map()
+  if (idx === -1) {
+    this._sharedFunctionInfoNodes.push(node)
+    idx = this._sharedFunctionInfo.push(new SharedFunctionInfo(node)) - 1
+  }
+
+  return this._sharedFunctionInfo[idx]
+}
+
 proto._hoist = function cfg_hoist(inputNode) {
   var self = this
   var items = []
+
+  var sfi = this._getSharedFunctionInfo(inputNode)
+
+  if (sfi) {
+    sfi.contributeToContext(this)
+    return
+  }
 
   estraverse.traverse(inputNode, {enter: enter})
 
@@ -319,11 +354,11 @@ proto._hoist = function cfg_hoist(inputNode) {
     var name = this._scopeStack.getprop(items[i].id.name)
     name.assign(this.visitFunctionExpression(items[i]))
     this._connect(this.last(), new Operation(Operation.kind.STORE_VALUE, items[i].id.name, null, null))
-    this._valueStack.pop()
+    this._connect(this.last(), this._popValue())
   }
 
   function enter(node, parent) {
-    if (node.type === 'VariableDeclaration') {
+    if (node.type === 'VariableDeclaration' && node.kind === 'var') {
       self._hoistVariableDeclaration(node)
     } else if (node.type === 'FunctionDeclaration' && node !== inputNode) {
       self._scopeStack.newprop(node.id.name, 'var')
