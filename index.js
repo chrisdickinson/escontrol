@@ -46,6 +46,12 @@ proto.global = function() {
   return this._global
 }
 
+proto.stackInfo = function() {
+  return this._stack.map(function(xs) {
+    return xs.fn.name
+  }).join('/')
+}
+
 proto._pushBlockStack = function() {
   this._blockStack = createBlockStack()
   this._blockStacks.push(this._blockStack)
