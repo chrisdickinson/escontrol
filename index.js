@@ -9,6 +9,8 @@ var createValueStack = require('./value-stack.js')
 var createScopeStack = require('./scope-stack.js')
 var createCallStack = require('./call-stack.js')
 var makeBuiltins = require('./builtins.js')
+var Operation = require('./operation.js')
+var simplify = require('./simplify.js')
 var estraverse = require('estraverse')
 
 function CFGFactory(node) {
@@ -68,9 +70,17 @@ proto.advance = function cfg_next() {
 
     frame.fn.call(this, frame.context)
 
+    if (this._stack.length === 0) {
+      // filter out unreachable nodes
+      this._edges = this._edges.filter(function(xs) {
+        return !xs.unreachable
+      })
+
+      this._edges = simplify(this._edges)
+    }
+
     return this._stack.length
   }
-
   return null
 }
 
@@ -113,21 +123,30 @@ proto._branchEnd = function(id) {
 }
 
 proto._connect = function(from, to, retainValue) {
+  if (!from) {
+    this._lastNode = to
+    return
+  }
+
   // something something something
   // edges will encode:
   //  * value/type flow ??
   //  * conditional flow
   //  * exceptional flow
   var val = this._valueStack.current()
-  this._edges.push({
+  var edge = {
     kind: this._connectionKind.pop() || 'normal',
     value: retainValue ? (val && val.unwrap ? val.unwrap() : val) : null,
     from: from,
     to: to,
-  })
-  // load "x" from "y"
-  // create "x"
+    unreachable: false
+  }
 
+  from.send(edge)
+  to.receive(edge)
+
+  edge.unreachable = from._isUnreachable
+  this._edges.push(edge)
   this._lastNode = to
 }
 
@@ -141,9 +160,16 @@ proto._pushBlock = function cfg_pushBlock(node, hasException, finalizerNode) {
 
   var current = this._blockStack.current()
 
+  var last = this.last()
+
   this._nodes.push(current.enter)
   this._nodes.push(current.exit)
-  this._nodes.push(current.exception)
+
+  if (current.exception) {
+    this._connect(this._createUnreachable(), current.exception)
+    this._setLastNode(last)
+  }
+
 
   if (!FUNCTIONS[node.type]) {
     this._connect(this.last(), current.enter)
@@ -160,40 +186,52 @@ proto._isLValue = function() {
   return this._stack[this._stack.length - 1].isLValue
 }
 
-proto._pushValue = function cfg_pushValue(value, isStatic, fromName) {
-  this._valueStack.push(value, isStatic)
-  this._connect(this.last(), {
-    operation: fromName ? 'load' : 'literal',
-    name: fromName ? fromName : null,
-    value: this._valueStack.current()
-  })
-}
-
 proto._popValue = function(as) {
   var val = this._valueStack.pop()
 
-  // XXX: what do nodes look like?
-  return {operation: as || 'pop', value: val}
+  return new Operation(
+    as || Operation.kind.POP,
+    null,
+    null,
+    null
+  )
 }
 
 proto._createArrayNode = function(len) {
   this._valueStack.toArray(len)
-  return {operation: '(array)', size: len}
+
+  return new Operation(
+    Operation.kind.LOAD_LITERAL_ARRAY,
+    len,
+    null,
+    null
+  )
 }
 
 proto._createObjectNode = function(len) {
   this._valueStack.toObject(len)
-  return {operation: '(object)', size: len}
+  return new Operation(
+    Operation.kind.LOAD_LITERAL_OBJECT,
+    len,
+    null,
+    null
+  )
 }
 
 proto._createUnreachable = function() {
-  return {operation: '(unreachable)'}
+  return new Operation(
+    Operation.kind.UNREACHABLE,
+    null,
+    null,
+    null
+  )
 }
 
 proto._setLastNode = function(node) {
   this._lastNode = node
 }
 
+// TODO: handle callstack
 proto._throwException = function(typeName) {
   var oldLast = this.last()
   var current = this._blockStack.current()
@@ -280,6 +318,7 @@ proto._hoist = function cfg_hoist(inputNode) {
   for (var i = 0, len = items.length; i < len; ++i) {
     var name = this._scopeStack.getprop(items[i].id.name)
     name.assign(this.visitFunctionExpression(items[i]))
+    this._connect(this.last(), new Operation(Operation.kind.STORE_VALUE, items[i].id.name, null, null))
     this._valueStack.pop()
   }
 

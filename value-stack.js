@@ -77,7 +77,6 @@ proto.toObject = function(len, builtins) {
   if (len) {
     var values = len ? this._values.slice(len * -2) : []
     this._values.length -= len * 2
-    var isStatic = true
 
     if (this._values.length < this._fence.at) {
       throw new Error('crossed fence!')

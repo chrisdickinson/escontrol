@@ -1,5 +1,7 @@
 module.exports = BlockStack
 
+var Operation = require('./operation.js')
+
 function BlockStack() {
   if (!(this instanceof BlockStack)) {
     return new BlockStack()
@@ -20,9 +22,8 @@ proto.root = function() {
 }
 
 proto.pushState = function (node, labels, hasException, finalizer) {
-  this._block = new Block(this._block, node, labels, hasException ? {
-    operation: 'exception'
-  } : null, finalizer || null)
+  this._block = new Block(this._block, node, labels, hasException ? new Operation(    Operation.kind.EXC, node.type, null, null
+  ) : null, finalizer || null)
   this._root = this._root || this._block
 }
 
@@ -40,8 +41,8 @@ function Block(parent, astNode, labels, exc, finalizer) {
   this.labels = labels.slice()
   this.finalizer = finalizer || null
 
-  this.enter = {operation: 'enter ' + astNode.type}
-  this.exit = {operation: 'exit ' + astNode.type}
+  this.enter = new Operation(Operation.kind.ENTER, astNode.type, null, null)
+  this.exit = new Operation(Operation.kind.EXIT, astNode.type, null, null)
   this.exception = exc || null
 }
 
