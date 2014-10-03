@@ -91,6 +91,10 @@ proto._setException = function() {
   this._connectionKind.push('exception')
 }
 
+proto._setBackedge = function() {
+  this._connectionKind.push('back-edge')
+}
+
 proto.setNormal = function() {
   this._connectionKind.push('normal')
 }
