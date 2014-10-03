@@ -169,11 +169,11 @@ proto._pushValue = function cfg_pushValue(value, isStatic, fromName) {
   })
 }
 
-proto._popValue = function() {
+proto._popValue = function(as) {
   var val = this._valueStack.pop()
 
   // XXX: what do nodes look like?
-  return {operation: '(pop)', value: val}
+  return {operation: as || 'pop', value: val}
 }
 
 proto._createArrayNode = function(len) {
