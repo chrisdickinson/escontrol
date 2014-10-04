@@ -61,8 +61,46 @@ function makeRuntime(builtins, globals) {
     quickfn(xs, MathFunctionImpl(xs), MathObject)
   })
 
-  quickfn('call', CallFunctionImpl, functionProto)
-  quickfn('apply', ApplyFunctionImpl, functionProto)
+  var xs = 
+[ 'encodeURIComponent',
+  'parseFloat',
+  'parseInt',
+  'Error',
+  'EvalError',
+  'TypeError',
+  'Infinity',
+  'URIError',
+  'SyntaxError',
+  'ReferenceError',
+  'decodeURIComponent',
+  'Date',
+  'isNaN',
+  'RangeError',
+  'isFinite',
+  'undefined',
+  'unescape',
+  'decodeURI',
+  'escape',
+  'JSON',
+  'NaN',
+  'eval',
+  'encodeURI' ]
+  quickfn('Number', NumberImpl, globals)
+  quickfn('Boolean', BooleanImpl, globals)
+  quickfn('String', StringImpl, globals)
+  quickfn('RegExp', RegExpImpl, globals)
+  quickfn('Array', ArrayImpl, globals)
+  quickfn('Object', ObjectImpl, globals)
+  quickfn('Function', FunctionImpl, globals)
+  globals.getprop('Object').value().getprop('prototype').assign(objectProto)
+  globals.getprop('Function').value().getprop('prototype').assign(functionProto)
+  globals.getprop('Array').value().getprop('prototype').assign(arrayProto)
+  globals.getprop('String').value().getprop('prototype').assign(stringProto)
+  globals.getprop('Boolean').value().getprop('prototype').assign(booleanProto)
+  globals.getprop('Number').value().getprop('prototype').assign(numberProto)
+  globals.getprop('RegExp').value().getprop('prototype').assign(regexpProto)
+
+  return
 
   function quickfn(name, impl, into) {
     var fn = new FunctionValue(
@@ -70,7 +108,7 @@ function makeRuntime(builtins, globals) {
       {},
       functionProto,
       name,
-      root,
+      builtins,
       null,
       null,
       true
@@ -85,6 +123,59 @@ function makeRuntime(builtins, globals) {
   }
 }
 
+function NumberImpl(cfg, thisValue, args, isNew) {
+  cfg._valueStack.push(
+    new Value(cfg._builtins, 'number', Number(args[0].toValue()).value)
+  )
+}
+
+function BooleanImpl(cfg, thisValue, args, isNew) {
+  cfg._valueStack.push(
+    new Value(cfg._builtins, 'boolean', !!args[0].toValue().value)
+  )
+}
+
+function StringImpl(cfg, thisValue, args, isNew) {
+  cfg._valueStack.push(
+    new Value(cfg._builtins, 'string', String(args[0].toValue().value))
+  )
+}
+
+function RegExpImpl(cfg, thisValue, args, isNew) {
+  cfg._valueStack.push(
+    new ObjectValue(cfg._builtins, hidden.initial.REGEXP, cfg._builtins.getprop('[[RegExpProto]]').value())
+  )
+}
+
+function ArrayImpl(cfg, thisValue, args, isNew) {
+  // TODO: make this more accurate!
+  cfg._valueStack.push(
+    new ObjectValue(cfg._builtins, hidden.initial.ARRAY, cfg._builtins.getprop('[[ArrayProto]]').value())
+  )
+}
+
+function ObjectImpl(cfg, thisValue, args, isNew) {
+  // TODO: make this more accurate!
+  cfg._valueStack.push(
+    new ObjectValue(cfg._builtins, hidden.initial.EMPTY, cfg._builtins.getprop('[[ObjectProto]]').value())
+  )
+}
+
+function FunctionImpl(cfg, thisValue, args, isNew) {
+  cfg._valueStack.push(
+    new FunctionValue(
+      builtins,
+      {},
+      cfg._builtins.getprop('[[FunctionProto]]').value(),
+      '(dynamic function)',
+      new ObjectValue(cfg._builtins, hidden.initial.EXPANDO, null),
+      null,
+      null,
+      true
+    )
+  )
+}
+
 function MathFunctionImpl(name) {
   return MathFunctionImpl
 
@@ -94,70 +185,3 @@ function MathFunctionImpl(name) {
   }
 }
 
-function CallFunctionImpl(cfg, thisValue, args, isNew) {
-  var realFunction = thisValue
-  var realThis = args.shift()
-
-  if (realFunction.isUnknown()) {
-    if (!realFunction.isFunction()) {
-      cfg._throwException('TypeError')
-    }
-    realFunction.assumeFunction()
-  } else if (!realFunction.isFunction()) {
-    cfg._throwException('TypeError')
-    cfg._connect(cfg.last(), cfg._createUnreachable())
-  }
-
-  var recurses = cfg._callStack.isRecursion(realFunction)
-
-  if (recurses) {
-    var last = cfg.last()
-    cfg._setBackedge()
-    cfg._connect(last, cfg._blockStack.root().enter)
-    cfg._setLastNode(last)
-  }
-
-  if (!realFunction.isUnknown() && realFunction.isFunction() && !recurses) {
-    realFunction.call(cfg, realThis, args)
-  } else {
-    cfg._valueStack.push(new Unknown())
-  }
-}
-
-function ApplyFunctionImpl(cfg, thisValue, args, isNew) {
-  var realFunction = thisValue
-  var realThis = args.shift()
-
-  if (realFunction.isUnknown()) {
-    if (!realFunction.isFunction()) {
-      cfg._throwException('TypeError')
-    }
-    realFunction.assumeFunction()
-  } else if (!realFunction.isFunction()) {
-    cfg._throwException('TypeError')
-    cfg._connect(cfg.last(), cfg._createUnreachable())
-  }
-
-  var recurses = cfg._callStack.isRecursion(realFunction)
-
-  if (recurses) {
-    var last = cfg.last()
-    cfg._setBackedge()
-    cfg._connect(last, cfg._blockStack.root().enter)
-    cfg._setLastNode(last)
-  }
-
-  if (!realFunction.isUnknown() && realFunction.isFunction() && !recurses) {
-    var len = args[0] ? args[0].getprop('length').value() || 0 : 0
-    var newArgs = []
-    console.error(args)
-    for(var i = 0; i < len; ++i) {
-      newArgs[i] = args.getprop(i).value()
-    }
-
-    console.error(newArgs)
-    realFunction.call(cfg, realThis, newArgs)
-  } else {
-    cfg._valueStack.push(new Unknown())
-  }
-}

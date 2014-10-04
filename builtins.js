@@ -3,6 +3,8 @@ module.exports = makeBuiltins
 var FunctionValue = require('./lib/values/function.js')
 var hidden = require('./lib/values/hidden-class.js')
 var ObjectValue = require('./lib/values/object.js')
+var Unknown = require('./lib/values/unknown.js')
+var Value = require('./lib/values/value.js')
 
 function makeBuiltins() {
   var root = new ObjectValue(null, hidden.initial.EMPTY, null)
@@ -25,6 +27,8 @@ function makeBuiltins() {
   )
 
   objectProto.newprop('toString').assign(toString)
+  quickfn('call', CallFunctionImpl, functionProto)
+  quickfn('apply', ApplyFunctionImpl, functionProto)
 
   root.newprop('[[ObjectProto]]').assign(objectProto)
   root.newprop('[[ArrayProto]]').assign(arrayProto)
@@ -37,4 +41,92 @@ function makeBuiltins() {
   root.newprop('[[ArgumentsProto]]').assign(argumentsProto)
 
   return root
+
+  function quickfn(name, impl, into) {
+    var fn = new FunctionValue(
+      root,
+      {},
+      functionProto,
+      name,
+      root,
+      null,
+      null,
+      true
+    )
+    fn.call = impl
+    fn.copy = function() {
+      var result = FunctionValue.prototype.copy.apply(this, arguments)
+      result.call = impl
+      return result
+    }
+    into.newprop(name).assign(fn)
+  }
+}
+
+function CallFunctionImpl(cfg, thisValue, args, isNew) {
+  var realFunction = thisValue
+  var realThis = args.shift()
+
+  if (realFunction.isUnknown()) {
+    if (!realFunction.isFunction()) {
+      cfg._throwException('TypeError')
+    }
+    realFunction.assumeFunction()
+  } else if (!realFunction.isFunction()) {
+    cfg._throwException('TypeError')
+    cfg._connect(cfg.last(), cfg._createUnreachable())
+  }
+
+  var recurses = cfg._callStack.isRecursion(realFunction)
+
+  if (recurses) {
+    var last = cfg.last()
+    cfg._setBackedge()
+    cfg._connect(last, cfg._blockStack.root().enter)
+    cfg._setLastNode(last)
+  }
+
+  if (!realFunction.isUnknown() && realFunction.isFunction() && !recurses) {
+    realFunction.call(cfg, realThis, args)
+  } else {
+    cfg._valueStack.push(new Unknown())
+  }
+}
+
+function ApplyFunctionImpl(cfg, thisValue, args, isNew) {
+  var realFunction = thisValue
+  var realThis = args.shift()
+
+  if (realFunction.isUnknown()) {
+    if (!realFunction.isFunction()) {
+      cfg._throwException('TypeError')
+    }
+    realFunction.assumeFunction()
+  } else if (!realFunction.isFunction()) {
+    cfg._throwException('TypeError')
+    cfg._connect(cfg.last(), cfg._createUnreachable())
+  }
+
+  var recurses = cfg._callStack.isRecursion(realFunction)
+
+  if (recurses) {
+    var last = cfg.last()
+    cfg._setBackedge()
+    cfg._connect(last, cfg._blockStack.root().enter)
+    cfg._setLastNode(last)
+  }
+
+  if (!realFunction.isUnknown() && realFunction.isFunction() && !recurses) {
+    var len = args[0] ? args[0].getprop('length').value() || 0 : 0
+    var newArgs = []
+    console.error(args)
+    for(var i = 0; i < len; ++i) {
+      newArgs[i] = args.getprop(i).value()
+    }
+
+    console.error(newArgs)
+    realFunction.call(cfg, realThis, newArgs)
+  } else {
+    cfg._valueStack.push(new Unknown())
+  }
 }
