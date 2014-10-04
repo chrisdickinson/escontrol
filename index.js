@@ -87,6 +87,10 @@ proto.advance = function cfg_next() {
   return null
 }
 
+proto.edges = function() {
+  return this._edges.slice()
+}
+
 proto.last = function() {
   return this._lastNode
 }

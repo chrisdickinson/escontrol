@@ -119,12 +119,9 @@ function ApplyFunctionImpl(cfg, thisValue, args, isNew) {
   if (!realFunction.isUnknown() && realFunction.isFunction() && !recurses) {
     var len = args[0] ? args[0].getprop('length').value() || 0 : 0
     var newArgs = []
-    console.error(args)
     for(var i = 0; i < len; ++i) {
       newArgs[i] = args.getprop(i).value()
     }
-
-    console.error(newArgs)
     realFunction.call(cfg, realThis, newArgs)
   } else {
     cfg._valueStack.push(new Unknown())
