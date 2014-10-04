@@ -1,6 +1,6 @@
 module.exports = visualize
 
-function visualize(cfg) {
+function visualize(cfg, onerror) {
   var output = []
   var nodes = []
 
@@ -10,6 +10,7 @@ function visualize(cfg) {
 
   var seen = {}
 
+  onerror = onerror || Function()
   output.push('digraph Program {')
   output.push('node [margin=0 shape=box textalign=left]')
   for (var i = 0, len = edges.length; i < len; ++i) {
@@ -17,7 +18,7 @@ function visualize(cfg) {
     node = edges[i].from
 
     if (!node) {
-      console.error('from', edges[i])
+      onerror('from', edges[i])
       continue
     }
 
@@ -30,7 +31,7 @@ function visualize(cfg) {
     node = edges[i].to
 
     if (!node) {
-      console.error('to', edges[i])
+      onerror('to', edges[i])
       continue
     }
 
@@ -54,5 +55,5 @@ function visualize(cfg) {
   }
   output.push('}')
 
-  return output
+  return output.join('\n')
 }
