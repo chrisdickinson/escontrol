@@ -64,5 +64,5 @@ proto.getThis = function() {
 }
 
 proto.getArguments = function() {
-
+  return this._args
 }

@@ -11,6 +11,7 @@ var createBlockStack = require('./block-stack.js')
 var createCallStack = require('./call-stack.js')
 var makeBuiltins = require('./builtins.js')
 var Operation = require('./operation.js')
+var makeRuntime = require('./runtime.js')
 var simplify = require('./simplify.js')
 var estraverse = require('estraverse')
 
@@ -25,6 +26,7 @@ function CFGFactory(node) {
   this._builtins = makeBuiltins()
   this._global = new ObjectValue(this._builtins, hidden.initial.EMPTY, null)
   this._valueStack = createValueStack(this._builtins)
+  makeRuntime(this._builtins, this._global)
   this._blockStack = null
   this._blockStacks = []
   this._pushBlockStack()
@@ -151,8 +153,8 @@ proto._connect = function(from, to, retainValue) {
   this._lastNode = to
 }
 
-proto._pushFrame = function(fn, context, isLValue) {
-  this._stack.push(new Frame(fn, context, Boolean(isLValue), this._blockStack.current()))
+proto._pushFrame = function(fn, context, isLValue, isCallee) {
+  this._stack.push(new Frame(fn, context, Boolean(isLValue), Boolean(isCallee), this._blockStack.current()))
 }
 
 proto._pushBlock = function cfg_pushBlock(node, hasException, finalizerNode) {
@@ -182,6 +184,10 @@ proto._popBlock = function() {
 
 proto._isLValue = function() {
   return this._stack[this._stack.length - 1].isLValue
+}
+
+proto._isCallee = function() {
+  return this._stack[this._stack.length - 1].isCallee
 }
 
 proto._popValue = function(as) {
@@ -412,9 +418,10 @@ proto._unwind = function() {
   }
 }
 
-function Frame(fn, context, isLValue, block) {
+function Frame(fn, context, isLValue, isCallee, block) {
   this.fn = fn
   this.block = block
+  this.isCallee = isCallee
   this.context = context
   this.isLValue = isLValue
 }

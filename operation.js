@@ -112,12 +112,49 @@ Operation.kind = {
   LOAD_LITERAL: _++,
   LOAD_LITERAL_ARRAY: _++,
   LOAD_LITERAL_OBJECT: _++,
+  MATH_RANDOM: _++,
+  MATH_ABS: _++,
+  MATH_ACOS: _++,
+  MATH_ASIN: _++,
+  MATH_ATAN: _++,
+  MATH_CEIL: _++,
+  MATH_COS: _++,
+  MATH_EXP: _++,
+  MATH_FLOOR: _++,
+  MATH_LOG: _++,
+  MATH_ROUND: _++,
+  MATH_SIN: _++,
+  MATH_SQRT: _++,
+  MATH_TAN: _++,
+  MATH_ATAN2: _++,
+  MATH_POW: _++,
+  MATH_MAX: _++,
+  MATH_MIN: _++, 
+
 
   // fake ops:
   ENTER: _++,
   EXIT: _++,
   EXC: _++
 }
+    'random',
+    'abs',
+    'acos',
+    'asin',
+    'atan',
+    'ceil',
+    'cos',
+    'exp',
+    'floor',
+    'log',
+    'round',
+    'sin',
+    'sqrt',
+    'tan',
+    'atan2',
+    'pow',
+    'max',
+    'min' 
 
 Operation.mneumonic = []
 Operation.mneumonic[Operation.kind.UNREACHABLE] = 'UNREACHABLE'
@@ -175,6 +212,24 @@ Operation.mneumonic[Operation.kind.SWITCH_COMPARE] = 'SWITCH_COMPARE'
 Operation.mneumonic[Operation.kind.LOAD_LITERAL] = 'LOAD_LITERAL'
 Operation.mneumonic[Operation.kind.LOAD_LITERAL_ARRAY] = 'LOAD_LITERAL_ARRAY'
 Operation.mneumonic[Operation.kind.LOAD_LITERAL_OBJECT] = 'LOAD_LITERAL_OBJECT'
+Operation.mneumonic[Operation.kind.MATH_RANDOM] = 'MATH_RANDOM'
+Operation.mneumonic[Operation.kind.MATH_ABS] = 'MATH_ABS'
+Operation.mneumonic[Operation.kind.MATH_ACOS] = 'MATH_ACOS'
+Operation.mneumonic[Operation.kind.MATH_ASIN] = 'MATH_ASIN'
+Operation.mneumonic[Operation.kind.MATH_ATAN] = 'MATH_ATAN'
+Operation.mneumonic[Operation.kind.MATH_CEIL] = 'MATH_CEIL'
+Operation.mneumonic[Operation.kind.MATH_COS] = 'MATH_COS'
+Operation.mneumonic[Operation.kind.MATH_EXP] = 'MATH_EXP'
+Operation.mneumonic[Operation.kind.MATH_FLOOR] = 'MATH_FLOOR'
+Operation.mneumonic[Operation.kind.MATH_LOG] = 'MATH_LOG'
+Operation.mneumonic[Operation.kind.MATH_ROUND] = 'MATH_ROUND'
+Operation.mneumonic[Operation.kind.MATH_SIN] = 'MATH_SIN'
+Operation.mneumonic[Operation.kind.MATH_SQRT] = 'MATH_SQRT'
+Operation.mneumonic[Operation.kind.MATH_TAN] = 'MATH_TAN'
+Operation.mneumonic[Operation.kind.MATH_ATAN2] = 'MATH_ATAN2'
+Operation.mneumonic[Operation.kind.MATH_POW] = 'MATH_POW'
+Operation.mneumonic[Operation.kind.MATH_MAX] = 'MATH_MAX'
+Operation.mneumonic[Operation.kind.MATH_MIN] = 'MATH_MIN'
 
 //
 Operation.mneumonic[Operation.kind.ENTER] = 'ENTER'
