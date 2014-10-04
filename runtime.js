@@ -67,7 +67,7 @@ function makeRuntime(builtins, globals) {
   function quickfn(name, impl, into) {
     var fn = new FunctionValue(
       builtins,
-      null,
+      {},
       functionProto,
       name,
       root,
@@ -112,6 +112,7 @@ function CallFunctionImpl(cfg, thisValue, args, isNew) {
 
   if (recurses) {
     var last = cfg.last()
+    cfg._setBackedge()
     cfg._connect(last, cfg._blockStack.root().enter)
     cfg._setLastNode(last)
   }
@@ -141,6 +142,7 @@ function ApplyFunctionImpl(cfg, thisValue, args, isNew) {
 
   if (recurses) {
     var last = cfg.last()
+    cfg._setBackedge()
     cfg._connect(last, cfg._blockStack.root().enter)
     cfg._setLastNode(last)
   }
