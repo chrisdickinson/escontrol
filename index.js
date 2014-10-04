@@ -14,6 +14,7 @@ var Operation = require('./operation.js')
 var makeRuntime = require('./runtime.js')
 var simplify = require('./simplify.js')
 var estraverse = require('estraverse')
+var graphviz
 
 function CFGFactory(node) {
   if (!(this instanceof CFGFactory)) {
@@ -420,6 +421,11 @@ proto._unwind = function() {
   while(this._blockStack.current() !== frame.block) {
     this._blockStack.pop()
   }
+}
+
+proto.toDot = function() {
+  graphviz = graphviz || require('./graphviz.js')
+  return graphviz(this._edges)
 }
 
 function Frame(fn, context, isLValue, isCallee, block) {

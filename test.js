@@ -2,6 +2,9 @@ var esprima = require('esprima')
   , pad = require('pad')
   , fs = require('fs')
 
+console.error('Usage: `node test.js <file> | dot -T svg > output.svg`')
+console.error('   outputs global object info on stderr.')
+
 var pretty = require('pretty-bytes')
 
 var ast = esprima.parse(
@@ -17,66 +20,14 @@ cfg.global().newprop('window').assign(cfg.global())
 
 i = 0
 
-var now = Date.now(), dt
-while(cfg.advance()) {
-    dt = Date.now()
-    if(false) console.log(
-        dt - now,
-        cfg._callStack.info(),
-        pretty(process.memoryUsage().heapUsed),
-        cfg._stack[cfg._stack.length - 1].fn.name,
-        cfg._stack[cfg._stack.length - 1].context.loc &&
-        cfg._stack[cfg._stack.length - 1].context.loc.start.line
 
-    )
-    now = dt
+while(cfg.advance()) {
 }
 
 var attrs = cfg.global()._attributes
 Object.keys(attrs).forEach(function(xs) {
-  console.log(xs, '=', attrs[xs]._value.classInfo())
+  console.error(xs, '=', attrs[xs]._value.classInfo())
 })
-
-console.log(cfg._edges.length)
-
-
-if(false)
-setImmediate(function iter() {
-  var dt = Date.now()
-  if (cfg.advance()) {
-    dt = Date.now() - dt
-    if (false && Date.now() - dt > 4000) {
-      console.log('dumping...')
-      heapdump.writeSnapshot(function () {
-        process.exit()
-        setImmediate(iter)
-      })
-    } else {
-      setImmediate(iter)
-    
-    }
-
-    console.log(
-        dt,
-        cfg._callStack.info(),
-        pretty(process.memoryUsage().heapUsed),
-        cfg._stack[cfg._stack.length - 1].fn.name,
-        cfg._stack[cfg._stack.length - 1].context.loc &&
-        cfg._stack[cfg._stack.length - 1].context.loc.start.line
-
-    )
-  } else {
-    cfg._edges.map(function(xs) {
-      // console.log(xs)
-      // console.log(xs.kind, xs.from, xs.from ? xs.from.value || '' : '')
-    })
-
-    // console.log(cfg.global()._attributes)
-
-    var attrs = cfg.global()._attributes
-    Object.keys(attrs).forEach(function(xs) {
-      console.log(xs, '=', attrs[xs]._value.classInfo())
-    })
-    
-  }
-})
+var viz = require('./graphviz.js')
+var out = viz(cfg)
+console.log(out)
