@@ -137,24 +137,6 @@ Operation.kind = {
   EXIT: _++,
   EXC: _++
 }
-    'random',
-    'abs',
-    'acos',
-    'asin',
-    'atan',
-    'ceil',
-    'cos',
-    'exp',
-    'floor',
-    'log',
-    'round',
-    'sin',
-    'sqrt',
-    'tan',
-    'atan2',
-    'pow',
-    'max',
-    'min' 
 
 Operation.mneumonic = []
 Operation.mneumonic[Operation.kind.UNREACHABLE] = 'UNREACHABLE'
