@@ -25,7 +25,7 @@ function CFGFactory(node) {
   this._graphs = []
   this._lastNode = null
   this._builtins = makeBuiltins()
-  this._global = new ObjectValue(this._builtins, hidden.initial.EMPTY, null)
+  this._global = new ObjectValue(this._builtins, hidden.initial.GLOBAL, null)
   this._valueStack = createValueStack(this._builtins)
   makeRuntime(this._builtins, this._global)
   this._blockStack = null
