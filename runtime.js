@@ -114,11 +114,6 @@ function makeRuntime(builtins, globals) {
       true
     )
     fn.call = impl
-    fn.copy = function() {
-      var result = FunctionValue.prototype.copy.apply(this, arguments)
-      result.call = impl
-      return result
-    }
     into.newprop(name).assign(fn)
   }
 }

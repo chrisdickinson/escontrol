@@ -16,17 +16,23 @@ var simplify = require('./simplify.js')
 var estraverse = require('estraverse')
 var graphviz
 
-function CFGFactory(node) {
+function CFGFactory(node, opts) {
   if (!(this instanceof CFGFactory)) {
     return new CFGFactory(node)
   }
 
+  opts = opts || {}
+  this.onunknown = opts.onunknown || noop
+  this.onvisit = opts.onvisit || noop
+  this.oncall = opts.oncall || noop
+  this.onfunction = opts.onfunction || noop
+  this._visit = opts.visit ? this._listenvisit : this._basevisit
   this._stack = []
   this._graphs = []
   this._lastNode = null
   this._builtins = makeBuiltins()
   this._global = new ObjectValue(this._builtins, hidden.initial.GLOBAL, null)
-  this._valueStack = createValueStack(this._builtins)
+  this._valueStack = createValueStack(this._builtins, opts.onvalue, opts.onpopvalue)
   makeRuntime(this._builtins, this._global)
   this._blockStack = null
   this._blockStacks = []
@@ -263,50 +269,66 @@ proto._throwException = function(typeName) {
 
 }
 
-proto._visit = function cfg_visit(node) {
-  switch(node.type) {
-    case 'DebuggerStatement':
-    case 'EmptyStatement': return
-    case 'LabeledStatement':
-      this._labels.push(node.label.name)
-      this._visit(node.body)
+proto._listenvisit = function(node) {
+  this.onvisit(node)
+  return this._basevisit(node)
+}
 
-    return
-    case 'Program': return this._pushFrame(this.visitProgram, node)
-    case 'BlockStatement': return this._pushFrame(this.visitBlock, node)
-    case 'ExpressionStatement': return this._pushFrame(this.visitExpressionStatement, node)
-    case 'Literal': return this._pushFrame(this.visitLiteral, node)
-    case 'Identifier': return this._pushFrame(this.visitIdentifier, node)
-    case 'BinaryExpression': return this._pushFrame(this.visitBinaryExpression, node)
-    case 'SequenceExpression': return this._pushFrame(this.visitSequenceExpression, node)
-    case 'ConditionalExpression': return this._pushFrame(this.visitConditionalExpression, node)
-    case 'IfStatement': return this._pushFrame(this.visitIfStatement, node)
-    case 'LogicalExpression': return this._pushFrame(this.visitLogicalExpression, node)
-    case 'ForStatement': return this._pushFrame(this.visitForStatement, node)
-    case 'ForInStatement': return this._pushFrame(this.visitForInStatement, node)
-    case 'WhileStatement': return this._pushFrame(this.visitWhileStatement, node)
-    case 'DoWhileStatement': return this._pushFrame(this.visitDoWhileStatement, node)
-    case 'BreakStatement': return this._pushFrame(this.visitBreakStatement, node)
-    case 'ContinueStatement': return this._pushFrame(this.visitContinueStatement, node)
-    case 'SwitchStatement': return this._pushFrame(this.visitSwitchStatement, node)
-    case 'ThisExpression': return this._pushFrame(this.visitThisExpression, node)
-    case 'ArrayExpression': return this._pushFrame(this.visitArrayExpression, node)
-    case 'ObjectExpression': return this._pushFrame(this.visitObjectExpression, node)
-    case 'UnaryExpression': return this._pushFrame(this.visitUnaryExpression, node)
-    case 'MemberExpression': return this._pushFrame(this.visitMemberExpression, node)
-    case 'UpdateExpression': return this._pushFrame(this.visitUpdateExpression, node)
-    case 'ReturnStatement': return this._pushFrame(this.visitReturnStatement, node)
-    case 'ThrowStatement': return this._pushFrame(this.visitThrowStatement, node)
-    case 'AssignmentExpression': return this._pushFrame(this.visitAssignmentExpression, node)
-    case 'TryStatement': return this._pushFrame(this.visitTryStatement, node)
-    case 'VariableDeclaration': return this._pushFrame(this.visitVariableDeclaration, node)
-    case 'FunctionExpression': return this._pushFrame(this.visitFunctionExpression, node)
-    case 'CallExpression': return this._pushFrame(this.visitCallExpression, node)
-    case 'NewExpression': return this._pushFrame(this.visitNewExpression, node)
-    case 'FunctionDeclaration': return
+proto._basevisit = function cfg_visit(node) {
+  var target = null
+  switch(node.type) {
+    case 'Identifier': target = this.visitIdentifier; break
+    case 'MemberExpression': target = this.visitMemberExpression; break
+    case 'Literal': target = this.visitLiteral; break
+    case 'CallExpression': target = this.visitCallExpression; break
+    case 'BlockStatement': target = this.visitBlock; break
+    case 'ExpressionStatement': target = this.visitExpressionStatement; break
+    case 'AssignmentExpression': target = this.visitAssignmentExpression; break
+    case 'BinaryExpression': target = this.visitBinaryExpression; break
+    case 'VariableDeclaration': target = this.visitVariableDeclaration; break
+    case 'LogicalExpression': target = this.visitLogicalExpression; break
+    case 'IfStatement': target = this.visitIfStatement; break
+    case 'ReturnStatement': target = this.visitReturnStatement; break
+    case 'FunctionExpression': target = this.visitFunctionExpression; break
+    case 'UnaryExpression': target = this.visitUnaryExpression; break
+    case 'ThisExpression': target = this.visitThisExpression; break
+    case 'ConditionalExpression': target = this.visitConditionalExpression; break
+    case 'ObjectExpression': target = this.visitObjectExpression; break
+    case 'ArrayExpression': target = this.visitArrayExpression; break
+    case 'UpdateExpression': target = this.visitUpdateExpression; break
+    case 'WhileStatement': target = this.visitWhileStatement; break
+    case 'ForStatement': target = this.visitForStatement; break
+    case 'NewExpression': target = this.visitNewExpression; break
+    case 'ForInStatement': target = this.visitForInStatement; break
+    case 'TryStatement': target = this.visitTryStatement; break
+    case 'BreakStatement': target = this.visitBreakStatement; break
+    case 'ContinueStatement': target = this.visitContinueStatement; break
+    case 'ThrowStatement': target = this.visitThrowStatement; break
+    case 'SwitchStatement': target = this.visitSwitchStatement; break
+    case 'DoWhileStatement': target = this.visitDoWhileStatement; break
+    case 'Program': target = this.visitProgram; break
+    case 'SequenceExpression': target = this.visitSequenceExpression; break
+    case 'FunctionDeclaration':
+    case 'DebuggerStatement':
+    case 'EmptyStatement': target = this.visitEmpty; break
+    case 'LabeledStatement': target = this.visitLabeledStatement; break
+    default: target = this.visitUnknown; break
   }
-  
+
+  this._pushFrame(target, node)
+}
+
+proto.visitUnknown = function(node) {
   throw new Error('unrecognized: ' + node.type)
+}
+
+proto.visitLabeledStatement = function(node) {
+  this._labels.push(node.label.name)
+  this._visit(node.body)
+}
+
+proto.visitEmpty = function() {
+
 }
 
 var FUNCTIONS = {
@@ -468,7 +490,6 @@ require('./lib/visit-expr-function.js')(proto)
 require('./lib/visit-expr-call.js')(proto)
 require('./lib/visit-expr-new.js')(proto)
 
-if(false) {
-require('./lib/visit-stmt-for-of.js')(proto)
-require('./lib/visit-stmt-with.js')(proto)
+function noop() {
+
 }

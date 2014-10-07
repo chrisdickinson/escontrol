@@ -4,7 +4,7 @@ var hidden = require('./lib/values/hidden-class.js')
 var ObjectValue = require('./lib/values/object.js')
 var Value = require('./lib/values/value.js')
 
-function ValueStack(builtins) {
+function ValueStack(builtins, onvalue, onpopvalue) {
   if (!(this instanceof ValueStack)) {
     return new ValueStack(builtins)
   }
@@ -13,17 +13,24 @@ function ValueStack(builtins) {
   this._fence = {at: -1}
   this._fence.prev = this._fence
   this._builtins = builtins
+  this._onvalue = onvalue || noop
+  this._onpopvalue = onpopvalue || noop
 }
 
 var cons = ValueStack
 var proto = cons.prototype
 
+function noop() {
+}
+
 proto.push = function (value) {
   this._values.push(value)
+  this._onvalue(value)
 }
 
 proto.pushHole = function() {
   this._values.push(null)
+  this._onvalue(null)
 }
 
 proto.pop = function () {
@@ -31,7 +38,9 @@ proto.pop = function () {
     throw new Error('crossed fence!')
   }
 
-  return this._values.pop()
+  var output = this._values.pop()
+  this._onpopvalue(output)
+  return output
 }
 
 proto.current = function () {
