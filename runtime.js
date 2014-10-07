@@ -17,6 +17,7 @@ function makeRuntime(builtins, globals) {
   var numberProto = builtins.getprop('[[NumberProto]]').value()
   var booleanProto = builtins.getprop('[[BooleanProto]]').value()
   var argumentsProto = builtins.getprop('[[ArgumentsProto]]').value()
+  var errorProto = builtins.getprop('[[ErrorProto]]').value()
 
   var MathObject = new ObjectValue(null, hidden.initial.EMPTY, objectProto)
   MathObject.newprop('E').assign(new Value(builtins, 'number'))
@@ -65,7 +66,6 @@ function makeRuntime(builtins, globals) {
 [ 'encodeURIComponent',
   'parseFloat',
   'parseInt',
-  'Error',
   'EvalError',
   'TypeError',
   'Infinity',
@@ -85,6 +85,7 @@ function makeRuntime(builtins, globals) {
   'NaN',
   'eval',
   'encodeURI' ]
+  quickfn('Error', ErrorImpl, globals)
   quickfn('Number', NumberImpl, globals)
   quickfn('Boolean', BooleanImpl, globals)
   quickfn('String', StringImpl, globals)
@@ -92,6 +93,7 @@ function makeRuntime(builtins, globals) {
   quickfn('Array', ArrayImpl, globals)
   quickfn('Object', ObjectImpl, globals)
   quickfn('Function', FunctionImpl, globals)
+  globals.getprop('Error').value().getprop('prototype').assign(errorProto)
   globals.getprop('Object').value().getprop('prototype').assign(objectProto)
   globals.getprop('Function').value().getprop('prototype').assign(functionProto)
   globals.getprop('Array').value().getprop('prototype').assign(arrayProto)
@@ -156,10 +158,14 @@ function ObjectImpl(cfg, thisValue, args, isNew) {
   )
 }
 
+function ErrorImpl(cfg, thisValue, args, isNew) {
+  cfg._valueStack.push(new Value(cfg._builtins, 'string'))
+}
+
 function FunctionImpl(cfg, thisValue, args, isNew) {
   cfg._valueStack.push(
     new FunctionValue(
-      builtins,
+      cfg._builtins,
       {},
       cfg._builtins.getprop('[[FunctionProto]]').value(),
       '(dynamic function)',

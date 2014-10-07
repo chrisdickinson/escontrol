@@ -48,7 +48,7 @@ proto.isRecursion = function(fn) {
   return false
 }
 
-function Frame(func, thisValue, args, isNew, parent, fromBlock) {
+function Frame(func, thisValue, args, isNew, fromBlock, parent) {
   this._func = func
   this._thisValue = thisValue
   this._args = args
