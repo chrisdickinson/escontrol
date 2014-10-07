@@ -447,7 +447,7 @@ proto._unwind = function() {
 
 proto.toDot = function() {
   graphviz = graphviz || require('./graphviz.js')
-  return graphviz(this._edges)
+  return graphviz(this)
 }
 
 function Frame(fn, context, isLValue, isCallee, block) {
