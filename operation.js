@@ -29,7 +29,7 @@ Operation.prototype.receive = function Operation_receive(edge) {
   ++this._incoming
   this._hasSpecialIncoming = this._hasSpecialIncoming || (edge.kind !== 'normal')
 
-  if (edge.from && edge.from._isUnreachable) {
+  if (edge.from && edge.from._isUnreachable && this._incoming === 1) {
     this._isUnreachable = true
   } else {
     this._isUnreachable = false
