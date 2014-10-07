@@ -6,7 +6,7 @@ var Value = require('./lib/values/value.js')
 
 function ValueStack(builtins, onvalue, onpopvalue) {
   if (!(this instanceof ValueStack)) {
-    return new ValueStack(builtins)
+    return new ValueStack(builtins, onvalue, onpopvalue)
   }
 
   this._values = []
