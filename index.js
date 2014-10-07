@@ -18,7 +18,7 @@ var graphviz
 
 function CFGFactory(node, opts) {
   if (!(this instanceof CFGFactory)) {
-    return new CFGFactory(node)
+    return new CFGFactory(node, opts)
   }
 
   opts = opts || {}
@@ -26,7 +26,7 @@ function CFGFactory(node, opts) {
   this.onvisit = opts.onvisit || noop
   this.oncall = opts.oncall || noop
   this.onfunction = opts.onfunction || noop
-  this._visit = opts.visit ? this._listenvisit : this._basevisit
+  this._visit = opts.onvisit ? this._listenvisit : this._basevisit
   this._stack = []
   this._graphs = []
   this._lastNode = null
