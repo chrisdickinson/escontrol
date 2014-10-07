@@ -80,8 +80,8 @@ proto.toArray = function(len) {
   this._values.push(objectValue)
 }
 
-proto.toObject = function(len, builtins) {
-  var objectValue = new ObjectValue(builtins, hidden.initial.EMPTY, this._builtins.newprop('[[ObjectProto]]').value())
+proto.toObject = function(len) {
+  var objectValue = new ObjectValue(this._builtins, hidden.initial.EMPTY, this._builtins.newprop('[[ObjectProto]]').value())
 
   if (len) {
     var values = len ? this._values.slice(len * -2) : []
