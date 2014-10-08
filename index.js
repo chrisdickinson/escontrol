@@ -3,12 +3,14 @@
 module.exports = CFGFactory
 
 var SharedFunctionInfo = require('./lib/values/shared-function-info.js')
+var FunctionValue = require('./lib/values/function.js')
 var hidden = require('./lib/values/hidden-class.js')
 var ObjectValue = require('./lib/values/object.js')
 var createValueStack = require('./value-stack.js')
 var createScopeStack = require('./scope-stack.js')
 var createBlockStack = require('./block-stack.js')
 var createCallStack = require('./call-stack.js')
+var Value = require('./lib/values/value.js')
 var makeBuiltins = require('./builtins.js')
 var Operation = require('./operation.js')
 var makeRuntime = require('./runtime.js')
@@ -25,6 +27,7 @@ function CFGFactory(node, opts) {
   this.onunknown = opts.onunknown || noop
   this.onvisit = opts.onvisit || noop
   this.oncall = opts.oncall || noop
+  this.onoperation = opts.onoperation || noop
   this.onfunction = opts.onfunction || noop
   this._visit = opts.onvisit ? this._listenvisit : this._basevisit
   this._stack = []
@@ -448,6 +451,33 @@ proto._unwind = function() {
 proto.toDot = function() {
   graphviz = graphviz || require('./graphviz.js')
   return graphviz(this)
+}
+
+proto.makeObject = function() {
+  return new ObjectValue(
+    this._builtins,
+    hidden.initial.EMPTY,
+    this._builtins.getprop('[[ObjectProto]]').value()
+  )
+}
+
+proto.makeFunction = function(fn) {
+  var value = new FunctionValue(
+    this._builtins,
+    {},
+    this._builtins.getprop('[[FunctionProto]]').value(),
+    fn.name,
+    this.global(),
+    null,
+    null,
+    true
+  )
+  value.call = fn
+  return value
+}
+
+proto.makeValue = function(kind, value) {
+  return new Value(this._builtins, kind, value)
 }
 
 function Frame(fn, context, isLValue, isCallee, block) {
