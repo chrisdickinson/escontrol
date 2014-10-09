@@ -27,6 +27,7 @@ function CFGFactory(node, opts) {
   this.onunknown = opts.onunknown || noop
   this.onvisit = opts.onvisit || noop
   this.oncall = opts.oncall || noop
+  this.oncalled = opts.oncalled || noop
   this.onoperation = opts.onoperation || noop
   this.onfunction = opts.onfunction || noop
   this._visit = opts.onvisit ? this._listenvisit : this._basevisit
