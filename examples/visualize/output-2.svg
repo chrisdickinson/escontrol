@@ -1,0 +1,58 @@
+digraph Program {
+node [margin=0 shape=box textalign=left]
+"B1 {\n  4: ENTER{Program}\n  6: CREATE_FUNCTION{}\n  7: STORE_VALUE{fibonacci}\n  8: POP{}\n  9: ENTER{ForStatement}\n  11: LOAD_NAME{i}\n  12: LOAD_LITERAL{}\n  13: STORE_VALUE{i}\n}";
+"B2 {\n  14: LOAD_VALUE{i}\n}";
+"B1 {\n  4: ENTER{Program}\n  6: CREATE_FUNCTION{}\n  7: STORE_VALUE{fibonacci}\n  8: POP{}\n  9: ENTER{ForStatement}\n  11: LOAD_NAME{i}\n  12: LOAD_LITERAL{}\n  13: STORE_VALUE{i}\n}" -> "B2 {\n  14: LOAD_VALUE{i}\n}"[color="gray"]
+"B3 {\n  15: LOAD_LITERAL{10}\n  16: LT{}\n}";
+"B2 {\n  14: LOAD_VALUE{i}\n}" -> "B3 {\n  15: LOAD_LITERAL{10}\n  16: LT{}\n}"[color="gray"]
+"B4 {\n  17: TEST{}\n}";
+"B3 {\n  15: LOAD_LITERAL{10}\n  16: LT{}\n}" -> "B4 {\n  17: TEST{}\n}"[color="gray"]
+"B23 {\n  10: EXIT{ForStatement}\n}";
+"B4 {\n  17: TEST{}\n}" -> "B23 {\n  10: EXIT{ForStatement}\n}"[color="red"]
+"B5 {\n  18: ENTER{BlockStatement}\n}";
+"B4 {\n  17: TEST{}\n}" -> "B5 {\n  18: ENTER{BlockStatement}\n}"[color="green"]
+"B6 {\n  20: LOAD_VALUE{console}\n}";
+"B5 {\n  18: ENTER{BlockStatement}\n}" -> "B6 {\n  20: LOAD_VALUE{console}\n}"[color="gray"]
+"1: EXC{Program}";
+"B6 {\n  20: LOAD_VALUE{console}\n}" -> "1: EXC{Program}"[color="purple"]
+"B7 {\n  21: LOAD_PROP_NAME{log}\n}";
+"B6 {\n  20: LOAD_VALUE{console}\n}" -> "B7 {\n  21: LOAD_PROP_NAME{log}\n}"[color="gray"]
+"B7 {\n  21: LOAD_PROP_NAME{log}\n}" -> "1: EXC{Program}"[color="purple"]
+"B8 {\n  22: LOAD_VALUE{fibonacci}\n  23: LOAD_VALUE{i}\n  24: CALL{1}\n}";
+"B7 {\n  21: LOAD_PROP_NAME{log}\n}" -> "B8 {\n  22: LOAD_VALUE{fibonacci}\n  23: LOAD_VALUE{i}\n  24: CALL{1}\n}"[color="gray"]
+"B9 {\n  26: ENTER{FunctionDeclaration}\n}";
+"B8 {\n  22: LOAD_VALUE{fibonacci}\n  23: LOAD_VALUE{i}\n  24: CALL{1}\n}" -> "B9 {\n  26: ENTER{FunctionDeclaration}\n}"[color="gray"]
+"B10 {\n  29: ENTER{BlockStatement}\n  31: ENTER{IfStatement}\n  33: LOAD_VALUE{n}\n  34: LOAD_LITERAL{1}\n  35: LEQ{}\n}";
+"B9 {\n  26: ENTER{FunctionDeclaration}\n}" -> "B10 {\n  29: ENTER{BlockStatement}\n  31: ENTER{IfStatement}\n  33: LOAD_VALUE{n}\n  34: LOAD_LITERAL{1}\n  35: LEQ{}\n}"[color="gray"]
+"B11 {\n  36: TEST{}\n}";
+"B10 {\n  29: ENTER{BlockStatement}\n  31: ENTER{IfStatement}\n  33: LOAD_VALUE{n}\n  34: LOAD_LITERAL{1}\n  35: LEQ{}\n}" -> "B11 {\n  36: TEST{}\n}"[color="gray"]
+"B12 {\n  37: LOAD_LITERAL{1}\n}";
+"B11 {\n  36: TEST{}\n}" -> "B12 {\n  37: LOAD_LITERAL{1}\n}"[color="green"]
+"B19 {\n  27: EXIT{FunctionDeclaration}\n}";
+"B12 {\n  37: LOAD_LITERAL{1}\n}" -> "B19 {\n  27: EXIT{FunctionDeclaration}\n}"[color="gray"]
+"B13 {\n  32: EXIT{IfStatement}\n}";
+"B11 {\n  36: TEST{}\n}" -> "B13 {\n  32: EXIT{IfStatement}\n}"[color="red"]
+"B14 {\n  39: LOAD_VALUE{fibonacci}\n  40: LOAD_VALUE{n}\n  41: LOAD_LITERAL{1}\n  42: SUB{}\n}";
+"B13 {\n  32: EXIT{IfStatement}\n}" -> "B14 {\n  39: LOAD_VALUE{fibonacci}\n  40: LOAD_VALUE{n}\n  41: LOAD_LITERAL{1}\n  42: SUB{}\n}"[color="gray"]
+"B15 {\n  43: CALL{1}\n}";
+"B14 {\n  39: LOAD_VALUE{fibonacci}\n  40: LOAD_VALUE{n}\n  41: LOAD_LITERAL{1}\n  42: SUB{}\n}" -> "B15 {\n  43: CALL{1}\n}"[color="gray"]
+"B15 {\n  43: CALL{1}\n}" -> "B9 {\n  26: ENTER{FunctionDeclaration}\n}"[color="orange"]
+"B16 {\n  44: LOAD_VALUE{fibonacci}\n  45: LOAD_VALUE{n}\n  46: LOAD_LITERAL{2}\n  47: SUB{}\n}";
+"B15 {\n  43: CALL{1}\n}" -> "B16 {\n  44: LOAD_VALUE{fibonacci}\n  45: LOAD_VALUE{n}\n  46: LOAD_LITERAL{2}\n  47: SUB{}\n}"[color="gray"]
+"B17 {\n  48: CALL{1}\n}";
+"B16 {\n  44: LOAD_VALUE{fibonacci}\n  45: LOAD_VALUE{n}\n  46: LOAD_LITERAL{2}\n  47: SUB{}\n}" -> "B17 {\n  48: CALL{1}\n}"[color="gray"]
+"B17 {\n  48: CALL{1}\n}" -> "B9 {\n  26: ENTER{FunctionDeclaration}\n}"[color="orange"]
+"B18 {\n  49: ADD{}\n}";
+"B17 {\n  48: CALL{1}\n}" -> "B18 {\n  49: ADD{}\n}"[color="gray"]
+"B18 {\n  49: ADD{}\n}" -> "B19 {\n  27: EXIT{FunctionDeclaration}\n}"[color="gray"]
+"B20 {\n  51: CALL{1}\n}";
+"B19 {\n  27: EXIT{FunctionDeclaration}\n}" -> "B20 {\n  51: CALL{1}\n}"[color="gray"]
+"B20 {\n  51: CALL{1}\n}" -> "1: EXC{Program}"[color="purple"]
+"B21 {\n  52: POP{}\n  19: EXIT{BlockStatement}\n  53: LOAD_NAME{i}\n  54: POSTINCR{}\n}";
+"B20 {\n  51: CALL{1}\n}" -> "B21 {\n  52: POP{}\n  19: EXIT{BlockStatement}\n  53: LOAD_NAME{i}\n  54: POSTINCR{}\n}"[color="gray"]
+"B22 {\n  55: POP{}\n}";
+"B21 {\n  52: POP{}\n  19: EXIT{BlockStatement}\n  53: LOAD_NAME{i}\n  54: POSTINCR{}\n}" -> "B22 {\n  55: POP{}\n}"[color="gray"]
+"B22 {\n  55: POP{}\n}" -> "B2 {\n  14: LOAD_VALUE{i}\n}"[color="orange"]
+"5: EXIT{Program}";
+"B23 {\n  10: EXIT{ForStatement}\n}" -> "5: EXIT{Program}"[color="gray"]
+}

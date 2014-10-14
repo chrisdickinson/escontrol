@@ -20,6 +20,8 @@ var edges = cfg.edges()
 
 Hoo-boy. This is in a rough state at the moment.
 
+Check out the `examples` directory for some usage.
+
 ## License
 
 MIT

@@ -1,0 +1,44 @@
+digraph Program {
+node [margin=0 shape=box textalign=left]
+"B1 {\n  4: ENTER{Program}\n  6: CREATE_FUNCTION{}\n  7: STORE_VALUE{compare}\n  8: POP{}\n  9: ENTER{IfStatement}\n  11: LOAD_VALUE{compare}\n  12: LOAD_VALUE{Math}\n  13: LOAD_PROP_NAME{random}\n  14: CALL{}\n  15: MATH_RANDOM{}\n  16: LOAD_LITERAL{0.5}\n  17: CALL{2}\n  19: ENTER{FunctionDeclaration}\n  22: ENTER{BlockStatement}\n  24: LOAD_VALUE{lhs}\n  25: LOAD_VALUE{rhs}\n  26: SUB{}\n  27: LOAD_LITERAL{}\n  28: GT{}\n}";
+"B2 {\n  20: EXIT{FunctionDeclaration}\n}";
+"B1 {\n  4: ENTER{Program}\n  6: CREATE_FUNCTION{}\n  7: STORE_VALUE{compare}\n  8: POP{}\n  9: ENTER{IfStatement}\n  11: LOAD_VALUE{compare}\n  12: LOAD_VALUE{Math}\n  13: LOAD_PROP_NAME{random}\n  14: CALL{}\n  15: MATH_RANDOM{}\n  16: LOAD_LITERAL{0.5}\n  17: CALL{2}\n  19: ENTER{FunctionDeclaration}\n  22: ENTER{BlockStatement}\n  24: LOAD_VALUE{lhs}\n  25: LOAD_VALUE{rhs}\n  26: SUB{}\n  27: LOAD_LITERAL{}\n  28: GT{}\n}" -> "B2 {\n  20: EXIT{FunctionDeclaration}\n}"[color="gray"]
+"B3 {\n  30: TEST{}\n}";
+"B2 {\n  20: EXIT{FunctionDeclaration}\n}" -> "B3 {\n  30: TEST{}\n}"[color="gray"]
+"B4 {\n  31: ENTER{BlockStatement}\n}";
+"B3 {\n  30: TEST{}\n}" -> "B4 {\n  31: ENTER{BlockStatement}\n}"[color="green"]
+"B5 {\n  33: LOAD_VALUE{console}\n}";
+"B4 {\n  31: ENTER{BlockStatement}\n}" -> "B5 {\n  33: LOAD_VALUE{console}\n}"[color="gray"]
+"1: EXC{Program}";
+"B5 {\n  33: LOAD_VALUE{console}\n}" -> "1: EXC{Program}"[color="purple"]
+"B6 {\n  34: LOAD_PROP_NAME{log}\n}";
+"B5 {\n  33: LOAD_VALUE{console}\n}" -> "B6 {\n  34: LOAD_PROP_NAME{log}\n}"[color="gray"]
+"B6 {\n  34: LOAD_PROP_NAME{log}\n}" -> "1: EXC{Program}"[color="purple"]
+"B7 {\n  35: LOAD_LITERAL{hello!}\n}";
+"B6 {\n  34: LOAD_PROP_NAME{log}\n}" -> "B7 {\n  35: LOAD_LITERAL{hello!}\n}"[color="gray"]
+"B8 {\n  36: CALL{1}\n}";
+"B7 {\n  35: LOAD_LITERAL{hello!}\n}" -> "B8 {\n  36: CALL{1}\n}"[color="gray"]
+"B8 {\n  36: CALL{1}\n}" -> "1: EXC{Program}"[color="purple"]
+"B9 {\n  37: POP{}\n  32: EXIT{BlockStatement}\n}";
+"B8 {\n  36: CALL{1}\n}" -> "B9 {\n  37: POP{}\n  32: EXIT{BlockStatement}\n}"[color="gray"]
+"B10 {\n  38: ENTER{BlockStatement}\n}";
+"B3 {\n  30: TEST{}\n}" -> "B10 {\n  38: ENTER{BlockStatement}\n}"[color="red"]
+"B11 {\n  40: LOAD_VALUE{console}\n}";
+"B10 {\n  38: ENTER{BlockStatement}\n}" -> "B11 {\n  40: LOAD_VALUE{console}\n}"[color="gray"]
+"B11 {\n  40: LOAD_VALUE{console}\n}" -> "1: EXC{Program}"[color="purple"]
+"B12 {\n  41: LOAD_PROP_NAME{log}\n}";
+"B11 {\n  40: LOAD_VALUE{console}\n}" -> "B12 {\n  41: LOAD_PROP_NAME{log}\n}"[color="gray"]
+"B12 {\n  41: LOAD_PROP_NAME{log}\n}" -> "1: EXC{Program}"[color="purple"]
+"B13 {\n  42: LOAD_LITERAL{hi.}\n}";
+"B12 {\n  41: LOAD_PROP_NAME{log}\n}" -> "B13 {\n  42: LOAD_LITERAL{hi.}\n}"[color="gray"]
+"B14 {\n  43: CALL{1}\n}";
+"B13 {\n  42: LOAD_LITERAL{hi.}\n}" -> "B14 {\n  43: CALL{1}\n}"[color="gray"]
+"B14 {\n  43: CALL{1}\n}" -> "1: EXC{Program}"[color="purple"]
+"B15 {\n  44: POP{}\n  39: EXIT{BlockStatement}\n}";
+"B14 {\n  43: CALL{1}\n}" -> "B15 {\n  44: POP{}\n  39: EXIT{BlockStatement}\n}"[color="gray"]
+"B16 {\n  10: EXIT{IfStatement}\n}";
+"B15 {\n  44: POP{}\n  39: EXIT{BlockStatement}\n}" -> "B16 {\n  10: EXIT{IfStatement}\n}"[color="gray"]
+"B9 {\n  37: POP{}\n  32: EXIT{BlockStatement}\n}" -> "B16 {\n  10: EXIT{IfStatement}\n}"[color="gray"]
+"5: EXIT{Program}";
+"B16 {\n  10: EXIT{IfStatement}\n}" -> "5: EXIT{Program}"[color="gray"]
+}
