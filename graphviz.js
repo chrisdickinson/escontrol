@@ -1,10 +1,9 @@
 module.exports = visualize
 
-function visualize(cfg, onerror) {
+function visualize(edges, onerror) {
   var output = []
   var nodes = []
 
-  var edges = cfg._edges
   var node
   var id = 1
 

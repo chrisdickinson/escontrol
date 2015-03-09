@@ -1,5 +1,6 @@
 module.exports = makeBuiltins
 
+var SharedFunctionInfo = require('./lib/values/shared-function-info.js')
 var FunctionValue = require('./lib/values/function.js')
 var hidden = require('./lib/values/hidden-class.js')
 var ObjectValue = require('./lib/values/object.js')
@@ -20,11 +21,16 @@ function makeBuiltins() {
   var argumentsProto = new ObjectValue(null, hidden.initial.EMPTY, objectProto)
   var errorProto = new ObjectValue(null, hidden.initial.EMPTY, objectProto)
 
+  var toStringAST = {"type":"FunctionDeclaration","id":{"type":"Identifier","name":"toString"},"params":[],"defaults":[],"body":{"type":"BlockStatement","body":[{"type":"ReturnStatement","argument":{"type":"BinaryExpression","operator":"+","left":{"type":"BinaryExpression","operator":"+","left":{"type":"Literal","value":"[object ","raw":"\'[object \'"},"right":{"type":"MemberExpression","computed":false,"object":{"type":"MemberExpression","computed":false,"object":{"type":"ThisExpression"},"property":{"type":"Identifier","name":"constructor"}},"property":{"type":"Identifier","name":"name"}}},"right":{"type":"Literal","value":"]","raw":"\']\'"}}}]},"rest":null,"generator":false,"expression":false}
+
+  var toStringSFI = new SharedFunctionInfo(toStringAST)
+
   var toString = new FunctionValue(root,
-      {"type":"FunctionDeclaration","id":{"type":"Identifier","name":"toString"},"params":[],"defaults":[],"body":{"type":"BlockStatement","body":[{"type":"ReturnStatement","argument":{"type":"BinaryExpression","operator":"+","left":{"type":"BinaryExpression","operator":"+","left":{"type":"Literal","value":"[object ","raw":"\'[object \'"},"right":{"type":"MemberExpression","computed":false,"object":{"type":"MemberExpression","computed":false,"object":{"type":"ThisExpression"},"property":{"type":"Identifier","name":"constructor"}},"property":{"type":"Identifier","name":"name"}}},"right":{"type":"Literal","value":"]","raw":"\']\'"}}}]},"rest":null,"generator":false,"expression":false},
+      toStringAST,
       functionProto,
       'toString',
-      root
+      root,
+      toStringSFI
   )
 
   objectProto.newprop('toString').assign(toString)

@@ -10,6 +10,7 @@ var createValueStack = require('./value-stack.js')
 var createScopeStack = require('./scope-stack.js')
 var createBlockStack = require('./block-stack.js')
 var createCallStack = require('./call-stack.js')
+var Unknown = require('./lib/values/unknown.js')
 var Value = require('./lib/values/value.js')
 var makeBuiltins = require('./builtins.js')
 var Operation = require('./operation.js')
@@ -30,14 +31,15 @@ function CFGFactory(node, opts) {
   this.oncalled = opts.oncalled || noop
   this.onoperation = opts.onoperation || noop
   this.onfunction = opts.onfunction || noop
+  this.onload = opts.onload || noop
   this._visit = opts.onvisit ? this._listenvisit : this._basevisit
   this._stack = []
   this._graphs = []
   this._lastNode = null
-  this._builtins = makeBuiltins()
-  this._global = new ObjectValue(this._builtins, hidden.initial.GLOBAL, null)
+  this._builtins = opts.builtins || makeBuiltins()
+  this._global = opts.global || new ObjectValue(this._builtins, hidden.initial.GLOBAL, null)
   this._valueStack = createValueStack(this._builtins, opts.onvalue, opts.onpopvalue)
-  makeRuntime(this._builtins, this._global)
+  if (!opts.global) makeRuntime(this._builtins, this._global)
   this._blockStack = null
   this._blockStacks = []
   this._pushBlockStack()
@@ -60,6 +62,10 @@ var proto = cons.prototype
 
 proto.global = function() {
   return this._global
+}
+
+proto.builtins = function() {
+  return this._builtins
 }
 
 proto.stackInfo = function() {
@@ -96,6 +102,10 @@ proto.advance = function cfg_next() {
     return this._stack.length
   }
   return null
+}
+
+proto.simplify = function() {
+  return simplify(this._edges)
 }
 
 proto.edges = function() {
@@ -451,7 +461,7 @@ proto._unwind = function() {
 
 proto.toDot = function() {
   graphviz = graphviz || require('./graphviz.js')
-  return graphviz(this)
+  return graphviz(simplify(this._edges))
 }
 
 proto.makeObject = function() {
@@ -462,23 +472,29 @@ proto.makeObject = function() {
   )
 }
 
-proto.makeFunction = function(fn) {
+proto.makeFunction = function(callFn, instantiateFn, prototype) {
+  var sfi = new SharedFunctionInfo({type: 'BlockStatement', body: []})
   var value = new FunctionValue(
     this._builtins,
     {},
-    this._builtins.getprop('[[FunctionProto]]').value(),
-    fn.name,
+    prototype || this.makeObject(),
+    callFn.name ? callFn.name : instantiateFn ? instantiateFn.name : '<anon>',
     this.global(),
-    null,
+    sfi,
     null,
     true
   )
-  value.call = fn
+  value.call = callFn
+  value.instantiateFn = instantiateFn || callFn
   return value
 }
 
 proto.makeValue = function(kind, value) {
   return new Value(this._builtins, kind, value)
+}
+
+proto.makeUnknown = function() {
+  return new Unknown(this._builtins)
 }
 
 function Frame(fn, context, isLValue, isCallee, block) {
