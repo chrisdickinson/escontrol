@@ -87,25 +87,16 @@ proto._popBlockStack = function() {
 proto.advance = function cfg_next() {
   if (this._stack.length) {
     var frame = this._stack.pop()
-
     frame.fn.call(this, frame.context)
-
-    if (this._stack.length === 0) {
-      // filter out unreachable nodes
-      this._edges = this._edges.filter(function(xs) {
-        return !xs.unreachable
-      })
-
-      this._edges = simplify(this._edges)
-    }
-
     return this._stack.length
   }
   return null
 }
 
 proto.simplify = function() {
-  return simplify(this._edges)
+  return simplify(this._edges.filter(function(xs) {
+    return !xs.unreachable
+  }))
 }
 
 proto.edges = function() {
