@@ -57,8 +57,10 @@ proto.unfence = function() {
 }
 
 proto.toArray = function(len) {
-  var objectValue = new ObjectValue(this._builtins, hidden.initial.ARRAY, this._builtins.newprop('[[ArrayProto]]').value())
+  var objectValue = this._builtins.getprop('[[ArrayConstructor]]').value().makeNew()
+
   objectValue.newprop('length').assign(new Value(this._builtins, 'number', len))
+  objectValue._static = true
 
   if (len) {
     var values = this._values.slice(-len)
