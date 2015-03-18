@@ -1,5 +1,9 @@
 module.exports = makeFunction
 
+var SharedFunctionInfo = require('../lib/values/shared-function-info.js')
+var FunctionValue = require('../lib/values/function.js')
+var hidden = require('../lib/values/hidden-class.js')
+var ObjectValue = require('../lib/values/object.js')
 var Unknown = require('../lib/values/unknown.js')
 
 function makeFunction(builtins, globals, quickFn) {
@@ -37,7 +41,7 @@ function CallFunctionImpl(cfg, thisValue, args, isNew) {
   if (!realFunction.isUnknown() && realFunction.isFunction() && !recurses) {
     realFunction.call(cfg, realThis, args)
   } else {
-    cfg._valueStack.push(new Unknown())
+    cfg._valueStack.push(new Unknown(cfg._builtins))
   }
 }
 
@@ -65,26 +69,40 @@ function ApplyFunctionImpl(cfg, thisValue, args, isNew) {
   }
 
   if (!realFunction.isUnknown() && realFunction.isFunction() && !recurses) {
-    var len = args[0] ? args[0].getprop('length').value() || 0 : 0
+    var len = 0
+    if (args[0]) {
+      var lenProp = args[0].getprop('length')
+      if (lenProp) {
+        len = lenProp.value()._value || 0
+      }
+    }
     var newArgs = []
     for(var i = 0; i < len; ++i) {
-      newArgs[i] = args.getprop(i).value()
+      var prop = args[0].getprop(i)
+      if (!prop) {
+        newArgs[i] = cfg.makeUndefined()
+      } else {
+        newArgs[i] = prop.value()
+      }
     }
     realFunction.call(cfg, realThis, newArgs)
   } else {
-    cfg._valueStack.push(new Unknown())
+    cfg._valueStack.push(new Unknown(cfg._builtins))
   }
 }
 
 function FunctionImpl(cfg, thisValue, args, isNew) {
+  var ast = {"type":"FunctionDeclaration","id":{"type":"Identifier","name":"toString"},"params":[],"defaults":[],"body":{"type":"BlockStatement","body":[{"type":"ReturnStatement","argument":null}]},"rest":null,"generator":false,"expression":false}
+
+  var sfi = new SharedFunctionInfo(ast)
   cfg._valueStack.push(
     new FunctionValue(
       cfg._builtins,
-      {},
+      ast,
       cfg._builtins.getprop('[[FunctionProto]]').value(),
       '(dynamic function)',
       new ObjectValue(cfg._builtins, hidden.initial.EXPANDO, null),
-      null,
+      sfi,
       null,
       true
     )

@@ -7,7 +7,7 @@ var Operation = require('../operation.js')
 
 function makeMath(builtins, globals, quickFn) {
   var objectProto = builtins.getprop('[[ObjectProto]]').value()
-  var MathObject = new ObjectValue(null, hidden.initial.EMPTY, objectProto)
+  var MathObject = new ObjectValue(builtins, hidden.initial.EMPTY, objectProto)
   MathObject.newprop('E').assign(new Value(builtins, 'number'))
   globals.newprop('Math').assign(MathObject)
   var numberProps = [

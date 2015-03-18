@@ -2,6 +2,8 @@ module.exports = makeObject
 
 var SharedFunctionInfo = require('../lib/values/shared-function-info.js')
 var FunctionValue = require('../lib/values/function.js')
+var hidden = require('../lib/values/hidden-class.js')
+var ObjectValue = require('../lib/values/object.js')
 
 function makeObject(builtins, globals, quickFn) {
   var functionProto = builtins.getprop('[[FunctionProto]]').value()
