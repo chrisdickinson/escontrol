@@ -3,6 +3,7 @@
 module.exports = CFGFactory
 
 var SharedFunctionInfo = require('./lib/values/shared-function-info.js')
+var makeUndefined = require('./lib/values/undefined.js')
 var FunctionValue = require('./lib/values/function.js')
 var hidden = require('./lib/values/hidden-class.js')
 var ObjectValue = require('./lib/values/object.js')
@@ -55,6 +56,8 @@ function CFGFactory(node, opts) {
   this._callStack.pushFrame(null, this._global, [], false, this._blockStack.current())
   this._pushFrame(this._visit, node)
   this._initSharedFunctionInfo()
+
+  this._lastASTNode = null
 }
 
 var cons = CFGFactory
@@ -274,6 +277,10 @@ proto._throwException = function(typeName) {
 
 }
 
+proto.lastASTNode = function() {
+  return this._lastASTNode
+}
+
 proto._listenvisit = function(node) {
   this.onvisit(node)
   return this._basevisit(node)
@@ -281,6 +288,7 @@ proto._listenvisit = function(node) {
 
 proto._basevisit = function cfg_visit(node) {
   var target = null
+  this._lastASTNode = node
   switch(node.type) {
     case 'Identifier': target = this.visitIdentifier; break
     case 'MemberExpression': target = this.visitMemberExpression; break
@@ -486,6 +494,10 @@ proto.makeValue = function(kind, value) {
 
 proto.makeUnknown = function() {
   return new Unknown(this._builtins)
+}
+
+proto.makeUndefined = function() {
+  return makeUndefined()
 }
 
 function Frame(fn, context, isLValue, isCallee, block) {
