@@ -38,9 +38,17 @@ function makeRuntime(builtins, globals) {
   'unescape',
   'decodeURI',
   'escape',
-  'JSON',
   'eval',
   'encodeURI' ]
+
+  var JSON = new ObjectValue(
+      builtins,
+      hidden.initial.EMPTY,
+      builtins.getprop('[[ObjectProto]]').value()
+  )
+  globals.newprop('JSON').assign(JSON)
+  quickfn('parse', JSONParseImpl, JSON)
+  quickfn('parse', JSONStringifyImpl, JSON)
 
   return
 
@@ -61,14 +69,10 @@ function makeRuntime(builtins, globals) {
   }
 }
 
-function StringImpl(cfg, thisValue, args, isNew) {
-  cfg._valueStack.push(
-    new Value(cfg._builtins, 'string', String(args[0].toValue().value))
-  )
+function JSONParseImpl(cfg, thisValue, args, isNew) {
+  cfg._valueStack.push(cfg.makeObject())
 }
 
-function RegExpImpl(cfg, thisValue, args, isNew) {
-  cfg._valueStack.push(
-    new ObjectValue(cfg._builtins, hidden.initial.REGEXP, cfg._builtins.getprop('[[RegExpProto]]').value())
-  )
+function JSONStringifyImpl(cfg, thisValue, args, isNew) {
+  cfg._valueStack.push(cfg.makeValue('string'))
 }
