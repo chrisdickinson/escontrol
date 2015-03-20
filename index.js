@@ -9,7 +9,6 @@ var hidden = require('./lib/values/hidden-class.js')
 var ObjectValue = require('./lib/values/object.js')
 var createValueStack = require('./value-stack.js')
 var createScopeStack = require('./scope-stack.js')
-var createBlockStack = require('./block-stack.js')
 var createCallStack = require('./call-stack.js')
 var Unknown = require('./lib/values/unknown.js')
 var makeRuntime = require('./runtime/index.js')
@@ -41,9 +40,6 @@ function CFGFactory(node, opts) {
   this._global = opts.global || new ObjectValue(this._builtins, hidden.initial.GLOBAL, null)
   this._valueStack = createValueStack(this._builtins, opts.onvalue, opts.onpopvalue)
   if (!opts.global) makeRuntime(this._builtins, this._global)
-  this._blockStack = null
-  this._blockStacks = []
-  this._pushBlockStack()
   this._scopeStack = createScopeStack(this._global, this._builtins)
   this._callStack = createCallStack()
   this._connectionKind = []
@@ -52,9 +48,9 @@ function CFGFactory(node, opts) {
 
   this._branchID = 1
 
-  this._blockStack.pushState(node, [], true)
-  this._callStack.pushFrame(null, this._global, [], false, this._blockStack.current())
+  this._callStack.pushFrame(null, this._global, [], false, null)
   this._pushFrame(this._visit, node)
+  this._pushBlock(node, true, null)
   this._initSharedFunctionInfo()
 
   this._lastASTNode = null
@@ -77,14 +73,23 @@ proto.stackInfo = function() {
   }).join('/')
 }
 
-proto._pushBlockStack = function() {
-  this._blockStack = createBlockStack()
-  this._blockStacks.push(this._blockStack)
-}
-
-proto._popBlockStack = function() {
-  this._blockStacks.pop()
-  this._blockStack = this._blockStacks[this._blockStacks.length - 1]
+proto.getExceptionDestination = function() {
+  var frame = this._callStack.current()
+  while (frame) {
+    var stack = frame.getStack()
+    var current = stack.current()
+    do {
+      if (current.exception && !/Function/.test(current.type)) {
+        return {
+          frame: frame,
+          block: current
+        }
+      }
+      current = current.parent()
+    } while (current)
+    frame = frame.parent
+  }
+  return null
 }
 
 proto.advance = function cfg_next() {
@@ -173,14 +178,15 @@ proto._connect = function(from, to, retainValue) {
 }
 
 proto._pushFrame = function(fn, context, isLValue, isCallee) {
-  this._stack.push(new Frame(fn, context, Boolean(isLValue), Boolean(isCallee), this._blockStack.current()))
+  this._stack.push(new Frame(fn, context, Boolean(isLValue), Boolean(isCallee), this._currentBlock()))
 }
 
 proto._pushBlock = function cfg_pushBlock(node, hasException, finalizerNode) {
-  this._blockStack.pushState(node, this._labels, hasException, finalizerNode)
+  var blockStack = this._callStack.current().getStack()
+  blockStack.pushState(node, this._labels, hasException, finalizerNode)
   this._labels.length = 0
 
-  var current = this._blockStack.current()
+  var current = blockStack.current()
 
   var last = this.last()
 
@@ -198,15 +204,15 @@ proto._pushBlock = function cfg_pushBlock(node, hasException, finalizerNode) {
 }
 
 proto._popBlock = function() {
-  return this._blockStack.pop()
+  return this._callStack.current().getStack().pop()
 }
 
 proto._currentBlock = function() {
-  return this._blockStack.current()
+  return this._callStack.current().getStack().current()
 }
 
 proto._rootBlock = function() {
-  return this._blockStack.root()
+  return this._callStack.current().getStack().root()
 }
 
 proto._isLValue = function() {
@@ -265,7 +271,8 @@ proto._setLastNode = function(node) {
 // TODO: handle callstack
 proto._throwException = function(typeName) {
   var oldLast = this.last()
-  var current = this._blockStack.current()
+  var blockStack = this._callStack.current().getStack()
+  var current = blockStack.current()
 
   while (current) {
     if (current.exception) {
@@ -443,27 +450,6 @@ proto._getEdgesTo = function(node) {
     }
   }
   return out
-}
-
-proto._unwind = function() {
-  var frame
-
-  for (var i = this._stack.length - 1; i > -1; --i) {
-    frame = this._stack[i]
-    if (frame.fn.unwindTarget) {
-      break
-    }
-  }
-
-  if (i === -1) {
-    throw new Error('unwound too much')
-  }
-
-  this._stack.splice(i + 1, this._stack.length - 1)
-
-  while(this._blockStack.current() !== frame.block) {
-    this._blockStack.pop()
-  }
 }
 
 proto.toDot = function() {

@@ -1,5 +1,6 @@
 module.exports = CallStack
 
+var createBlockStack = require('./block-stack.js')
 var unwrap = require('./lib/unwrap-all.js')
 
 function CallStack() {
@@ -54,6 +55,8 @@ function Frame(func, thisValue, args, isNew, fromBlock, parent) {
   this._args = args
   this._isNew = isNew
   this._fromBlock = fromBlock
+  this._stack = createBlockStack()
+
   this.parent = parent
 }
 
@@ -65,4 +68,12 @@ proto.getThis = function() {
 
 proto.getArguments = function() {
   return this._args
+}
+
+proto.getStack = function() {
+  return this._stack
+}
+
+proto.getFunction = function() {
+  return this._func
 }

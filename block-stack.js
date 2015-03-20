@@ -37,6 +37,7 @@ proto.pop = function () {
 
 function Block(parent, astNode, labels, exc, finalizer) {
   this.type = astNode.type
+  this.node = astNode
   this._parent = parent
   this.labels = labels.slice()
   this.finalizer = finalizer || null
