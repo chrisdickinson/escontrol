@@ -201,6 +201,14 @@ proto._popBlock = function() {
   return this._blockStack.pop()
 }
 
+proto._currentBlock = function() {
+  return this._blockStack.current()
+}
+
+proto._rootBlock = function() {
+  return this._blockStack.root()
+}
+
 proto._isLValue = function() {
   return this._stack[this._stack.length - 1].isLValue
 }
