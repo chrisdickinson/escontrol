@@ -34,7 +34,7 @@ function CallFunctionImpl(cfg, thisValue, args, isNew) {
   if (recurses) {
     var last = cfg.last()
     cfg._setBackedge()
-    cfg._connect(last, cfg._blockStack.root().enter)
+    cfg._connect(last, cfg._rootBlock().enter)
     cfg._setLastNode(last)
   }
 
@@ -64,7 +64,7 @@ function ApplyFunctionImpl(cfg, thisValue, args, isNew) {
   if (recurses) {
     var last = cfg.last()
     cfg._setBackedge()
-    cfg._connect(last, cfg._blockStack.root().enter)
+    cfg._connect(last, cfg._rootBlock().enter)
     cfg._setLastNode(last)
   }
 
