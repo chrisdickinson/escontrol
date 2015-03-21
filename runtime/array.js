@@ -19,7 +19,7 @@ function makeArray(builtins, globals, quickFn) {
   quickFn('concat', ReturnArr, arrayProto)
   quickFn('reverse', ReturnArr, arrayProto)
   quickFn('splice', ReturnArr, arrayProto)
-  quickFn('slice', ReturnArr, arrayProto)
+  quickFn('slice', ArraySlice, arrayProto)
   quickFn('sort', ReturnArr, arrayProto)
   quickFn('shift', ReturnValue, arrayProto)
   quickFn('pop', ReturnValue, arrayProto)
@@ -36,6 +36,57 @@ function makeArray(builtins, globals, quickFn) {
   arrayCons.getprop('prototype').assign(arrayProto)
   arrayProto.newprop('constructor').assign(arrayCons)
   builtins.newprop('[[ArrayConstructor]]').assign(arrayCons)
+
+  function ArraySlice(cfg, thisValue, args, isNew) {
+    if (thisValue.isNull() || thisValue.isUndefined()) {
+      return ReturnArr(cfg, thisValue, args, isNew)
+    }
+
+    var lengthProp = thisValue.getprop('length')
+    if (!lengthProp) {
+      return ReturnArr(cfg, thisValue, args, isNew)
+    }
+    var lengthValue = lengthProp.value()
+    if (!lengthValue || isNaN(lengthValue._value) || lengthValue._value < 0) {
+      return ReturnArr(cfg, thisValue, args, isNew)
+    }
+    var start = 0
+    var end = lengthValue._value
+    if (args.length > 0) {
+      var startValue = args[0]
+      startValue = startValue.toValue()
+      if (!startValue || isNaN(Number(startValue._value))) {
+        return ReturnArr(cfg, thisValue, args, isNew)
+      }
+      start = Number(startValue._value)
+      if (start < 0) {
+        start = end + start - 1
+      }
+    }
+    if (args.length > 1) {
+      var endValue = args[1]
+      endValue = endValue.toValue()
+      if (!endValue || isNaN(Number(endValue._value))) {
+        return ReturnArr(cfg, thisValue, args, isNew)
+      }
+      endValue = Number(endValue._value)
+      if (endValue < 0) {
+        end = end + endValue - 1
+      } else {
+        end = endValue
+      }
+    }
+    var out = arrayCons.makeNew()
+    out.newprop('length').assign(cfg.makeValue('number', end - start))
+    var idx = 0;
+    for (var i = start; i < end; ++i) {
+      var idxProp = thisValue.getprop(i)
+      if (idxProp) {
+        out.newprop(idx++).assign(thisValue.getprop(i).value())
+      }
+    }
+    cfg._valueStack.push(out)
+  }
 
   function ReturnArr(cfg, thisValue, args, isNew) {
     var out = arrayCons.makeNew()
