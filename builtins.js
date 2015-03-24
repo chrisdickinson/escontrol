@@ -20,6 +20,7 @@ function makeBuiltins() {
   var booleanProto = new ObjectValue(root, hidden.initial.EMPTY, objectProto)
   var argumentsProto = new ObjectValue(root, hidden.initial.EMPTY, objectProto)
   var errorProto = new ObjectValue(root, hidden.initial.EMPTY, objectProto)
+  var symbolProto = new ObjectValue(root, hidden.initial.EMPTY, objectProto)
 
   root.newprop('[[ObjectProto]]').assign(objectProto)
   root.newprop('[[ArrayProto]]').assign(arrayProto)
@@ -31,6 +32,7 @@ function makeBuiltins() {
   root.newprop('[[BooleanProto]]').assign(booleanProto)
   root.newprop('[[ArgumentsProto]]').assign(argumentsProto)
   root.newprop('[[ErrorProto]]').assign(errorProto)
+  root.newprop('[[SymbolProto]]').assign(symbolProto)
 
   return root
 }
