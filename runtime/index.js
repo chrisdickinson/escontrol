@@ -50,7 +50,7 @@ function makeRuntime(builtins, globals) {
   )
   globals.newprop('JSON').assign(JSON)
   quickfn('parse', JSONParseImpl, JSON)
-  quickfn('parse', JSONStringifyImpl, JSON)
+  quickfn('stringify', JSONStringifyImpl, JSON)
 
   return
 
