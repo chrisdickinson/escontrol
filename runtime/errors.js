@@ -22,6 +22,7 @@ function makeErrors(builtins, globals, quickFn) {
     var cons = quickFn(name, ErrorImpl, globals)
     var obj = new ObjectValue(builtins, hidden.initial.EMPTY, errorProto)
     cons.getprop('prototype').assign(obj)
+    builtins.newprop('[[' + name + ']]').assign(cons)
   })
 }
 

@@ -268,18 +268,36 @@ proto._setLastNode = function(node) {
   this._lastNode = node
 }
 
-// TODO: handle callstack
-proto._throwException = function(typeName) {
+proto._throwException = function(exc) {
   var oldLast = this.last()
-  var blockStack = this._callStack.current().getStack()
-  var current = blockStack.current()
+  var frame = this._callStack.current()
 
-  while (current) {
-    if (current.exception) {
+  if (typeof exc === 'string') {
+    var prop = this._builtins.getprop('[[' + exc + ']]')
+    if (!prop) {
+      throw new Error('unknown built in error type: ' + exc)
+    }
+    prop = prop.value()
+    if (!prop) {
+      throw new Error('error type ' + exc + ' has no value')
+    }
+    exc = prop.makeNew()
+  }
+
+  while (frame) {
+    var blockStack = frame.getStack()
+    var current = blockStack.current()
+    while (current) {
+      if (current.exception) {
+        break
+      }
+
+      current = current.parent()
+    }
+    if (current) {
       break
     }
-
-    current = current.parent()
+    frame = frame.parent
   }
 
   if (!current) {
@@ -289,7 +307,6 @@ proto._throwException = function(typeName) {
   this._setException()
   this._connect(oldLast, current.exception)
   this._setLastNode(oldLast)
-
 }
 
 proto.lastASTNode = function() {
@@ -457,10 +474,12 @@ proto.toDot = function() {
   return graphviz(simplify(this._edges))
 }
 
-proto.makeObject = function() {
+proto.makeObject = function(hci, proto) {
   return new ObjectValue(
     this._builtins,
-    hidden.initial.EMPTY,
+    hci || hidden.initial.EMPTY,
+    typeof proto === 'string' ? this._builtins.getprop(proto).value() :
+    typeof proto === 'object' ? proto :
     this._builtins.getprop('[[ObjectProto]]').value()
   )
 }
