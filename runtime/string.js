@@ -1,3 +1,5 @@
+'use strict'
+
 module.exports = makeString
 
 var SharedFunctionInfo = require('../lib/values/shared-function-info.js')
