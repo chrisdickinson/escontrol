@@ -67,6 +67,20 @@ proto.builtins = function() {
   return this._builtins
 }
 
+proto._isStrict = function() {
+  var frame = this._callStack.current()
+  var func = frame.getFunction()
+
+  // XXX: this isn't quite correct, since
+  // the top level frame may not have a function
+  // but may still be "use strict"
+  if (!func) {
+    return false
+  }
+
+  return func.isStrict()
+}
+
 proto.stackInfo = function() {
   return this._stack.map(function(xs) {
     return xs.fn.name
