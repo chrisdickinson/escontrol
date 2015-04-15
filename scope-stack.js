@@ -2,9 +2,8 @@
 
 module.exports = ScopeStack
 
-var hidden = require('./lib/values/hidden-class.js')
-var ObjectValue = require('./lib/values/object.js')
 var Membrane = require('./lib/values/membrane.js')
+var Scope = require('./lib/values/scope.js')
 
 function ScopeStack(root, builtins) {
   if(!(this instanceof ScopeStack)) {
@@ -12,9 +11,8 @@ function ScopeStack(root, builtins) {
   }
 
   this._membraneMap = new Map()
-  this._root = root
+  this._root = new Scope(builtins, root, 'Program')
   this._current = root
-  this._root._blockType = 'Program'
   this._builtins = builtins
 }
 
@@ -25,18 +23,16 @@ proto.current = function() {
 }
 
 proto.push = function(block) {
-  this._current = new ObjectValue(this._builtins, hidden.initial.EMPTY, this._current)
-  this._current._blockType = block.type
-  this._root = this._root || this._current
+  this._current = new Scope(this._builtins, this._current, block.type)
+}
+
+proto.set = function(scope) {
+  this._current = scope
 }
 
 proto.pushBranch = function(branchID) {
   this._current = new Membrane(this._current)
-  if (this._membraneMap.has(branchID)) {
-    throw new Error('scope stack does not have branch id #' + branchID)
-  }
   this._membraneMap.set(branchID, this._current)
-  this._current._blockType = '(Branch)'
 }
 
 proto.endBranch = function(branchID, stack) {
@@ -58,8 +54,9 @@ proto.root = function() {
 proto.newprop = function(str, kind) {
   if (kind === 'imaginary') {
     var current = this._current
-    while (current) { 
-      if (current._blockType === '(Branch)' || current._blockType === 'Program') {
+    while (current) {
+      var blockType = current.getBlockType()
+      if (blockType === 'Program' || blockType === '(Branch)') {
         break
       }
       current = current._prototype
@@ -77,7 +74,7 @@ proto.newprop = function(str, kind) {
   var current = this._current
   var okay = false
   do {
-    switch(current._blockType) {
+    switch(current.getBlockType()) {
       case 'Program':
       case 'FunctionDeclaration':
       case 'FunctionExpression':

@@ -12,6 +12,7 @@ var createScopeStack = require('./scope-stack.js')
 var createCallStack = require('./call-stack.js')
 var Unknown = require('./lib/values/unknown.js')
 var makeRuntime = require('./runtime/index.js')
+var Scope = require('./lib/values/scope.js')
 var Value = require('./lib/values/value.js')
 var makeBuiltins = require('./builtins.js')
 var Operation = require('./operation.js')
@@ -37,7 +38,7 @@ function CFGFactory(node, opts) {
   this._graphs = []
   this._lastNode = null
   this._builtins = opts.builtins || makeBuiltins()
-  this._global = opts.global || new ObjectValue(this._builtins, hidden.initial.GLOBAL, null)
+  this._global = new Scope(this._builtins, null, 'Program')
   this._valueStack = createValueStack(this._builtins, opts.onvalue, opts.onpopvalue)
   if (!opts.global) makeRuntime(this._builtins, this._global)
   this._scopeStack = createScopeStack(this._global, this._builtins)
