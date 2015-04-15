@@ -18,7 +18,7 @@ function makeObject(builtins, globals, quickFn) {
     toStringAST,
     functionProto,
     'toString',
-    root,
+    globals,
     toStringSFI
   )
 
