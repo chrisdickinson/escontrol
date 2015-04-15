@@ -21,6 +21,10 @@ function visualize(edges, onerror) {
       continue
     }
 
+    if (node._operations[0]._isUnreachable) {
+      continue
+    }
+
     if(!seen[node.human()]) {
       node.gvzName = JSON.stringify(node.human())
       output.push(node.gvzName + ';')
