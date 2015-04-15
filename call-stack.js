@@ -41,7 +41,7 @@ proto.isRecursion = function(fn) {
 
   while(current && current._func) {
     if (current._func._code === fn._code) {
-       return true
+       return current._fromBlock || true
     }
     current = current.parent
   }
