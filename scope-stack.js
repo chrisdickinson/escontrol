@@ -2,15 +2,16 @@
 
 module.exports = ScopeStack
 
-var WrappedValue = require('./lib/values/value-wrapped.js')
 var hidden = require('./lib/values/hidden-class.js')
 var ObjectValue = require('./lib/values/object.js')
+var Membrane = require('./lib/values/membrane.js')
 
 function ScopeStack(root, builtins) {
   if(!(this instanceof ScopeStack)) {
     return new ScopeStack(root, builtins)
   }
 
+  this._membraneMap = new Map()
   this._root = root
   this._current = root
   this._root._blockType = 'Program'
@@ -27,12 +28,23 @@ proto.push = function(block) {
   this._current = new ObjectValue(this._builtins, hidden.initial.EMPTY, this._current)
   this._current._blockType = block.type
   this._root = this._root || this._current
-
 }
 
 proto.pushBranch = function(branchID) {
-  this._current = new WrappedValue(this._current, branchID, this._current)
+  this._current = new Membrane(this._current)
+  if (this._membraneMap.has(branchID)) {
+    throw new Error('scope stack does not have branch id #' + branchID)
+  }
+  this._membraneMap.set(branchID, this._current)
   this._current._blockType = '(Branch)'
+}
+
+proto.endBranch = function(branchID, stack) {
+  var membrane = this._membraneMap.get(branchID)
+  if (membrane !== this._current) {
+    throw new Error('should not attempt to close membrane')
+  }
+  this._current = membrane.unwrapAll(stack)
 }
 
 proto.pop = function() {

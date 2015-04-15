@@ -157,10 +157,7 @@ proto._branchOpen = function() {
 }
 
 proto._branchEnd = function(id) {
-  this._valueStack._values = this._valueStack._values.map(function(lhs) {
-    return lhs && lhs.unwrap && lhs.branchNumber === id ? lhs.unwrap() : lhs
-  })
-  this._scopeStack.pop()
+  this._scopeStack.endBranch(id, this._valueStack._values)
 }
 
 proto._connect = function(from, to, retainValue) {
