@@ -17,7 +17,6 @@ var Value = require('./lib/values/value.js')
 var makeBuiltins = require('./builtins.js')
 var Operation = require('./operation.js')
 var simplify = require('./simplify.js')
-var estraverse = require('estraverse')
 var graphviz
 
 function CFGFactory(node, opts) {
@@ -52,7 +51,7 @@ function CFGFactory(node, opts) {
   this._callStack.pushFrame(null, this._global, [], false, null)
   this._pushFrame(this._visit, node)
   this._pushBlock(node, true, null)
-  this._initSharedFunctionInfo()
+  this._sharedFunctionInfo = new Map()
 
   this._lastASTNode = null
 }
@@ -149,6 +148,10 @@ proto._setBackedge = function() {
 
 proto.setNormal = function() {
   this._connectionKind.push('normal')
+}
+
+proto.setEitherCall = function() {
+  this._connectionKind.push('either-call')
 }
 
 proto._branchOpen = function() {
@@ -396,32 +399,13 @@ var FUNCTIONS = {
 
 var hasMap = typeof Map !== 'undefined'
 
-proto._initSharedFunctionInfo = hasMap ?
-function() {
-  this._sharedFunctionInfo = new Map()
-} : function() {
-  this._sharedFunctionInfoNodes = []
-  this._sharedFunctionInfo = []
-}
-
-proto._getSharedFunctionInfo = hasMap ? function(node) {
+proto._getSharedFunctionInfo = function(node) {
   var sfi = this._sharedFunctionInfo.get(node)
   if (!sfi) {
     sfi = new SharedFunctionInfo(node)
     this._sharedFunctionInfo.set(node, sfi)
   }
-
   return sfi
-} : function(node) {
-  var idx = this._sharedFunctionInfoNodes.indexOf(node)
-
-  // XXX: replace with Map()
-  if (idx === -1) {
-    this._sharedFunctionInfoNodes.push(node)
-    idx = this._sharedFunctionInfo.push(new SharedFunctionInfo(node)) - 1
-  }
-
-  return this._sharedFunctionInfo[idx]
 }
 
 proto._hoist = function cfg_hoist(inputNode) {
@@ -429,42 +413,7 @@ proto._hoist = function cfg_hoist(inputNode) {
   var items = []
 
   var sfi = this._getSharedFunctionInfo(inputNode)
-
-  if (sfi) {
-    sfi.contributeToContext(this)
-    return
-  }
-
-  estraverse.traverse(inputNode, {enter: enter})
-
-  // this is a two step process -- we want to have
-  // already declared all of the hoisted names before
-  // visiting the function body.
-  for (var i = 0, len = items.length; i < len; ++i) {
-    var name = this._scopeStack.getprop(items[i].id.name)
-    name.assign(this.visitFunctionExpression(items[i]))
-    this._connect(this.last(), new Operation(Operation.kind.STORE_VALUE, items[i].id.name, null, null))
-    this._connect(this.last(), this._popValue())
-  }
-
-  function enter(node, parent) {
-    if (node.type === 'VariableDeclaration' && node.kind === 'var') {
-      self._hoistVariableDeclaration(node)
-    } else if (node.type === 'FunctionDeclaration' && node !== inputNode) {
-      self._scopeStack.newprop(node.id.name, 'var')
-      items.push(node)
-    }
-    
-    if (FUNCTIONS[node.type] && node !== inputNode) {
-      this.skip()
-    }
-  }
-}
-
-proto._hoistVariableDeclaration = function(node) {
-  for(var i = 0, len = node.declarations.length; i < len; ++i) {
-    this._scopeStack.newprop(node.declarations[i].id.name, node.kind)
-  }
+  sfi.contributeToContext(this)
 }
 
 proto._currentCallFrame = function() {
