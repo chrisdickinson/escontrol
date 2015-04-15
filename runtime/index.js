@@ -27,6 +27,7 @@ function makeRuntime(builtins, globals) {
   builtinObject(builtins, globals, quickfn)
   builtinNumber(builtins, globals, quickfn)
   builtinRegExp(builtins, globals, quickfn)
+  builtinString(builtins, globals, quickfn)
   builtinSymbol(builtins, globals, quickfn)
   builtinError(builtins, globals, quickfn)
   builtinArray(builtins, globals, quickfn)
