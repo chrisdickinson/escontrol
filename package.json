@@ -6,7 +6,8 @@
   "devDependencies": {
     "esprima": "^1.2.2",
     "pad": "0.0.5",
-    "pretty-bytes": "^1.0.1"
+    "pretty-bytes": "^1.0.1",
+    "tape": "^4.0.0"
   },
   "dependencies": {
     "estraverse": "^1.5.1",
