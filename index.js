@@ -15,6 +15,7 @@ var makeRuntime = require('./runtime/index.js')
 var Scope = require('./lib/values/scope.js')
 var Value = require('./lib/values/value.js')
 var makeBuiltins = require('./builtins.js')
+var Name = require('./lib/values/name.js')
 var Operation = require('./operation.js')
 var simplify = require('./simplify.js')
 var graphviz
@@ -37,10 +38,11 @@ function CFGFactory(node, opts) {
   this._graphs = []
   this._lastNode = null
   this._builtins = opts.builtins || makeBuiltins()
-  this._global = opts.global || new Scope(this._builtins, null, 'Program')
+  this._global = new Name('[[Global]]')
+  this._global.assign(opts.global || new Scope(this._builtins, null, 'Program'))
   this._valueStack = createValueStack(this._builtins, opts.onvalue, opts.onpopvalue)
-  if (!opts.global) makeRuntime(this._builtins, this._global)
-  this._scopeStack = createScopeStack(this._global, this._builtins)
+  if (!opts.global) makeRuntime(this._builtins, this.global())
+  this._scopeStack = createScopeStack(this.global(), this._builtins)
   this._callStack = createCallStack()
   this._connectionKind = []
   this._edges = []
@@ -48,7 +50,7 @@ function CFGFactory(node, opts) {
 
   this._branchID = 1
 
-  this._callStack.pushFrame(null, this._global, [], false, null)
+  this._callStack.pushFrame(null, this.global(), [], false, null)
   this._pushFrame(this._visit, node)
   this._pushBlock(node, true, null)
   this._sharedFunctionInfo = new Map()
@@ -60,7 +62,7 @@ var cons = CFGFactory
 var proto = cons.prototype
 
 proto.global = function() {
-  return this._global
+  return this._global.value()
 }
 
 proto.builtins = function() {
