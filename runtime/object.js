@@ -24,11 +24,18 @@ function makeObject(builtins, globals, quickFn) {
 
   objectProto.newprop('toString').assign(toString)
   objectCons.getprop('prototype').assign(objectProto)
+  quickFn('create', ObjectCreateImpl, objectCons)
 }
 
 function ObjectImpl(cfg, thisValue, args, isNew) {
   // TODO: make this more accurate!
   cfg._valueStack.push(
     new ObjectValue(cfg._builtins, hidden.initial.EMPTY, cfg._builtins.getprop('[[ObjectProto]]').value())
+  )
+}
+
+function ObjectCreateImpl(cfg, thisValue, args, isNew) {
+  cfg._valueStack.push(
+    new ObjectValue(cfg._builtins, hidden.initial.EMPTY, args[0] || cfg.makeUnknown())
   )
 }
