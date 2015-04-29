@@ -56,6 +56,10 @@ Operation.prototype.human = function Operation_human() {
   return this._id + ': ' + Operation.mneumonic[this._kind] + '{' + [this._arg0, this._arg1, this._arg2].filter(Boolean).join(',') + '}'
 }
 
+Operation.prototype.opname = function Operation_opname() {
+  return Operation.mneumonic[this._kind]
+}
+
 Operation.kind = {
   UNREACHABLE: _++,
   ADD: _++,
@@ -112,6 +116,7 @@ Operation.kind = {
   LOAD_LITERAL: _++,
   LOAD_LITERAL_ARRAY: _++,
   LOAD_LITERAL_OBJECT: _++,
+  LOAD_LITERAL_TEMPLATE: _++,
   MATH_RANDOM: _++,
   MATH_ABS: _++,
   MATH_ACOS: _++,
@@ -194,6 +199,7 @@ Operation.mneumonic[Operation.kind.SWITCH_COMPARE] = 'SWITCH_COMPARE'
 Operation.mneumonic[Operation.kind.LOAD_LITERAL] = 'LOAD_LITERAL'
 Operation.mneumonic[Operation.kind.LOAD_LITERAL_ARRAY] = 'LOAD_LITERAL_ARRAY'
 Operation.mneumonic[Operation.kind.LOAD_LITERAL_OBJECT] = 'LOAD_LITERAL_OBJECT'
+Operation.mneumonic[Operation.kind.LOAD_LITERAL_TEMPLATE] = 'LOAD_LITERAL_TEMPLATE'
 Operation.mneumonic[Operation.kind.MATH_RANDOM] = 'MATH_RANDOM'
 Operation.mneumonic[Operation.kind.MATH_ABS] = 'MATH_ABS'
 Operation.mneumonic[Operation.kind.MATH_ACOS] = 'MATH_ACOS'

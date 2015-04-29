@@ -41,8 +41,8 @@ function CFGFactory(node, opts) {
   this._global = new Name('[[Global]]')
   this._global.assign(opts.global || new Scope(this._builtins, null, 'Program'))
   this._valueStack = createValueStack(this._builtins, opts.onvalue, opts.onpopvalue)
-  if (!opts.global) makeRuntime(this._builtins, this.global())
-  this._scopeStack = createScopeStack(this.global(), this._builtins)
+  if (!opts.global) makeRuntime(this._builtins, this._global.value())
+  this._scopeStack = createScopeStack(this._global.value(), this._builtins)
   this._callStack = createCallStack()
   this._connectionKind = []
   this._edges = []
@@ -62,7 +62,7 @@ var cons = CFGFactory
 var proto = cons.prototype
 
 proto.global = function() {
-  return this._global.value()
+  return this._scopeStack.root()//this._global.value()
 }
 
 proto.builtins = function() {
@@ -370,6 +370,10 @@ proto._basevisit = function cfg_visit(node) {
     case 'DoWhileStatement': target = this.visitDoWhileStatement; break
     case 'Program': target = this.visitProgram; break
     case 'SequenceExpression': target = this.visitSequenceExpression; break
+    case 'TaggedTemplateExpression':
+        target = this.visitTaggedTemplateLiteral; break
+    case 'TemplateLiteral': target = this.visitTemplateLiteral; break
+    case 'TemplateElement': target = this.visitTemplateElement; break
     case 'FunctionDeclaration':
     case 'DebuggerStatement':
     case 'EmptyStatement': target = this.visitEmpty; break
@@ -515,6 +519,7 @@ require('./lib/visit-expr-update.js')(proto)
 require('./lib/visit-expr-function.js')(proto)
 require('./lib/visit-expr-call.js')(proto)
 require('./lib/visit-expr-new.js')(proto)
+require('./lib/visit-expr-tpl-literal.js')(proto)
 
 function noop() {
 
