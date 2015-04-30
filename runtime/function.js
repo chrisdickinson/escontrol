@@ -1,4 +1,5 @@
 module.exports = makeFunction
+module.exports.callImpl = CallFunctionImpl
 
 var SharedFunctionInfo = require('../lib/values/shared-function-info.js')
 var FunctionValue = require('../lib/values/function.js')
@@ -15,7 +16,7 @@ function makeFunction(builtins, globals, quickFn) {
   quickFn('apply', ApplyFunctionImpl, functionProto)
 }
 
-function CallFunctionImpl(cfg, thisValue, args, isNew) {
+function CallFunctionImpl(cfg, thisValue, args, isNew, shouldBranch) {
   var realFunction = thisValue
   var realThis = args.shift()
 
@@ -34,12 +35,12 @@ function CallFunctionImpl(cfg, thisValue, args, isNew) {
   if (recurses) {
     var last = cfg.last()
     cfg._setBackedge()
-    cfg._connect(last, cfg._rootBlock().enter)
+    cfg._connect(last, recurses.enter ? recurses.enter : cfg._rootBlock().enter)
     cfg._setLastNode(last)
   }
 
   if (!realFunction.isUnknown() && realFunction.isFunction() && !recurses) {
-    realFunction.call(cfg, realThis, args)
+    realFunction.call(cfg, realThis, args, false, shouldBranch)
   } else {
     cfg._valueStack.push(new Unknown(cfg._builtins))
   }
@@ -64,7 +65,7 @@ function ApplyFunctionImpl(cfg, thisValue, args, isNew) {
   if (recurses) {
     var last = cfg.last()
     cfg._setBackedge()
-    cfg._connect(last, cfg._rootBlock().enter)
+    cfg._connect(last, recurses.enter ? recurses.enter : cfg._rootBlock().enter)
     cfg._setLastNode(last)
   }
 
@@ -85,7 +86,7 @@ function ApplyFunctionImpl(cfg, thisValue, args, isNew) {
         newArgs[i] = prop.value()
       }
     }
-    realFunction.call(cfg, realThis, newArgs)
+    realFunction.call(cfg, realThis, newArgs, false, shouldBranch)
   } else {
     cfg._valueStack.push(new Unknown(cfg._builtins))
   }
