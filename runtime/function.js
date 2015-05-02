@@ -46,7 +46,7 @@ function CallFunctionImpl(cfg, thisValue, args, isNew, shouldBranch) {
   }
 }
 
-function ApplyFunctionImpl(cfg, thisValue, args, isNew) {
+function ApplyFunctionImpl(cfg, thisValue, args, isNew, shouldBranch) {
   var realFunction = thisValue
   var realThis = args.shift()
 
