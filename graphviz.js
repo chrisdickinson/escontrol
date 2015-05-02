@@ -7,7 +7,7 @@ function visualize(edges, onerror) {
   var node
   var id = 1
 
-  var seen = {}
+  var seen = new Set()
 
   onerror = onerror || Function()
   output.push('digraph Program {')
@@ -25,10 +25,10 @@ function visualize(edges, onerror) {
       continue
     }
 
-    if(!seen[node.human()]) {
+    if(!seen.has(node)) {
       node.gvzName = JSON.stringify(node.human())
       output.push(node.gvzName + ';')
-      seen[node.human()] = true
+      seen.add(node)
     }
 
     node = edges[i].to
@@ -38,10 +38,10 @@ function visualize(edges, onerror) {
       continue
     }
 
-    if(!seen[node.human()]) {
+    if(!seen.has(node)) {
       node.gvzName = JSON.stringify(node.human())
       output.push(node.gvzName + ';')
-      seen[node.human()] = true
+      seen.add(node)
     }
 
     var color = {
