@@ -11,37 +11,35 @@ function visualize(edges, onerror) {
 
   onerror = onerror || Function()
   output.push('digraph Program {')
-  output.push('node [margin=0 shape=box textalign=left]')
+  output.push('node [margin=0 textalign=left]')
+
+  var mapped = new Map()
+  var ID = 0
+
   for (var i = 0, len = edges.length; i < len; ++i) {
 
     node = edges[i].from
 
-    if (!node) {
-      onerror('from', edges[i])
-      continue
-    }
+    if (node) {
+      if (node._operations && node._operations[0]._isUnreachable) {
+        continue
+      }
 
-    if (node._operations[0]._isUnreachable) {
-      continue
-    }
-
-    if(!seen.has(node)) {
-      node.gvzName = JSON.stringify(node.human())
-      output.push(node.gvzName + ';')
-      seen.add(node)
+      if(!seen.has(node)) {
+        mapped.set(node, ++ID)
+        output.push(`${ID} [label=${JSON.stringify(node.human())}]`)
+        seen.add(node)
+      }
     }
 
     node = edges[i].to
 
-    if (!node) {
-      onerror('to', edges[i])
-      continue
-    }
-
-    if(!seen.has(node)) {
-      node.gvzName = JSON.stringify(node.human())
-      output.push(node.gvzName + ';')
-      seen.add(node)
+    if (node) {
+      if(!seen.has(node)) {
+        mapped.set(node, ++ID)
+        output.push(`${ID} [label=${JSON.stringify(node.human())}]`)
+        seen.add(node)
+      }
     }
 
     var color = {
@@ -54,7 +52,14 @@ function visualize(edges, onerror) {
 
     color = edges[i].unreachable ? 'blue' : color
 
-    output.push(edges[i].from.gvzName + ' -> ' + edges[i].to.gvzName + '[color="' + color + '"]')
+    if (edges[i].from && edges[i].to) {
+      output.push(
+        mapped.get(edges[i].from) +
+        ' -> ' +
+        mapped.get(edges[i].to) +
+        '[color="' + color + '"]'
+      )
+    }
   }
   output.push('}')
 
