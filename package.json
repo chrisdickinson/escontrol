@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "estraverse": "^1.5.1",
-    "inherits": "^2.0.1"
+    "inherits": "^2.0.1",
+    "simplify-dag": "^2.0.1"
   },
   "scripts": {
     "test": "tape test/*.js | faucet"

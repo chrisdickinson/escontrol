@@ -43,21 +43,21 @@ function visualize(edges, onerror) {
     }
 
     var color = {
-      'if-true': 'green',
-      'if-false': 'red',
-      'exception': 'purple',
-      'back-edge': 'orange',
-      'normal': 'gray'
+      'if-true': 'label="if true," style="stroke: #7c7;" arrowheadStyle="fill: #7c7"',
+      'if-false': 'label="if false," style="stroke: #f77;" arrowheadStyle="fill: #f77"',
+      'exception': 'style="stroke: #b7b;" arrowheadStyle="fill: #b7b"',
+      'back-edge': 'style="stroke: #cb7;" arrowheadStyle="fill: #cb7"',
+      'normal': 'style="stroke: #ccc"'
     }[edges[i].kind]
 
-    color = edges[i].unreachable ? 'blue' : color
+    //color = edges[i].unreachable ? 'blue' : color
 
     if (edges[i].from && edges[i].to) {
       output.push(
         mapped.get(edges[i].from) +
         ' -> ' +
         mapped.get(edges[i].to) +
-        '[color="' + color + '"]'
+        '[' + color + ']'
       )
     }
   }

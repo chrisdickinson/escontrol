@@ -1,50 +1,82 @@
+'use strict'
+
 module.exports = simplify
 
+const simplifyDAG = require('simplify-dag')
+const φ = new Set()
+
 function simplify(edges) {
-  while(true) {
-    var startIdx = 0
-    var len = edges.length
-
-    while (startIdx < len && edges[startIdx].from instanceof Block) ++startIdx
-    if (startIdx === edges.length) break
-
-    var block = new Block([edges[startIdx].from])
-    var currentEdge = edges[startIdx]
-    var currentNode = currentEdge.from
-
-    for(var i = 0, len = edges.length; i < len; ++i) {
-      if (edges[i].from === currentNode) {
-        edges[i].from = block
-      }
-      if (edges[i].to === currentNode) {
-        edges[i].to = block
+  const vertices = new Set()
+  const incoming = new Map()
+  const outgoing = new Map()
+  const accessors = {
+    getFrom: function(edge) {
+      return edge.from
+    },
+    getTo: function(edge) {
+      return edge.to
+    },
+    setFrom: function(edge, from) {
+      if (!from) console.trace(edge)
+      edge.from = from
+    },
+    setTo: function(edge, to) {
+      if (!to) console.trace(edge)
+      edge.to = to
+    },
+    copyEdge: function(original) {
+      return {
+        kind: original.kind,
+        value: original.value,
+        unreachable: original.unreachable,
+        from: null,
+        to: null
       }
     }
+  }
 
-    var lastNode = currentNode
+  for (var i = 0; i < edges.length; ++i) {
+    vertices.add(edges[i].from)
+    vertices.add(edges[i].to)
+    if (!incoming.has(edges[i].to)) {
+      incoming.set(edges[i].to, new Set())
+    }
+    incoming.get(edges[i].to).add(edges[i])
+    if (!outgoing.has(edges[i].from)) {
+      outgoing.set(edges[i].from, new Set())
+    }
+    outgoing.get(edges[i].from).add(edges[i])
+  }
 
-    var currentEdgeIdx = startIdx
-    var skip = true
-    currentNode = currentEdge.to
-    while(lastNode.canSimplify() && currentNode.canSimplify()) {
-      block.pushOp(currentNode)
-      lastNode = currentNode
-      edges.splice(currentEdgeIdx, 1)
+  const simplified = simplifyDAG(vertices, incoming, outgoing, accessors)
+  const allEdges = new Set()
 
-      for(var i = 0, len = edges.length; i < len; ++i) {
-        if (edges[i].from === currentNode) {
-          currentEdge = edges[i]
-          edges[i].from = block
-          currentNode = edges[i].to
-          currentEdgeIdx = i
-          break
-        }
-      }
+  for (const group of simplified.vertices) {
+    const incomingEdges = simplified.incoming.get(group) || φ
+    const outgoingEdges = simplified.outgoing.get(group) || φ
+    const block         = new Block(group)
 
-      if (i === len) {
-        break
-      }
+    for (const edge of incomingEdges) {
+      edge.to = block
+      allEdges.add(edge)
+    }
+    for (const edge of outgoingEdges) {
+      edge.from = block
+      allEdges.add(edge)
+    }
+  }
+  edges.length = 0
+  for (const edge of allEdges) {
+    edges.push(edge)
+  }
 
+  if (edges.length === 0) {
+    for (const vertex of simplified.vertices) {
+      if (vertex[0].opname() === 'UNREACHABLE') continue
+      return [{
+        from: null,
+        to: new Block(vertex)
+      }]
     }
   }
 
