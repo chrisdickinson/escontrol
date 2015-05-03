@@ -26,6 +26,7 @@ function CFGFactory(node, opts) {
   }
 
   opts = opts || {}
+  this.operationId = 0
   this.onunknown = opts.onunknown || noop
   this.onvisit = opts.onvisit || noop
   this.oncall = opts.oncall || noop
@@ -109,11 +110,14 @@ proto.getExceptionDestination = function() {
 }
 
 proto.advance = function cfg_next() {
+  Operation.id = this.operationId
   if (this._stack.length) {
     var frame = this._stack.pop()
     frame.fn.call(this, frame.context)
+    this.operationId = Operation.id
     return this._stack.length
   }
+  this.operationId = Operation.id
   return null
 }
 
