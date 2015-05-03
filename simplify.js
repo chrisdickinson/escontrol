@@ -6,6 +6,7 @@ const simplifyDAG = require('simplify-dag')
 const φ = new Set()
 
 function simplify(edges) {
+  Block.id = 0;
   const vertices = new Set()
   const incoming = new Map()
   const outgoing = new Map()
@@ -51,11 +52,14 @@ function simplify(edges) {
   const simplified = simplifyDAG(vertices, incoming, outgoing, accessors)
   const allEdges = new Set()
 
+  const mapped = new Map()
+
   for (const group of simplified.vertices) {
     const incomingEdges = simplified.incoming.get(group) || φ
     const outgoingEdges = simplified.outgoing.get(group) || φ
     const block         = new Block(group)
 
+    mapped.set(group, block)
     for (const edge of incomingEdges) {
       edge.to = block
       allEdges.add(edge)
@@ -75,7 +79,7 @@ function simplify(edges) {
       if (vertex[0].opname() === 'UNREACHABLE') continue
       return [{
         from: null,
-        to: new Block(vertex)
+        to: mapped.get(vertex)
       }]
     }
   }
