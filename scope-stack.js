@@ -5,15 +5,15 @@ module.exports = ScopeStack
 var Membrane = require('./lib/values/membrane.js')
 var Scope = require('./lib/values/scope.js')
 
-function ScopeStack(root, builtins) {
+function ScopeStack(makeScope, root) {
   if(!(this instanceof ScopeStack)) {
-    return new ScopeStack(root, builtins)
+    return new ScopeStack(makeScope, root)
   }
 
+  this._makeScope = makeScope
   this._membraneMap = new Map()
-  this._root = new Scope(builtins, root, 'Program')
+  this._root = root
   this._current = root
-  this._builtins = builtins
 }
 
 var proto = ScopeStack.prototype
@@ -23,7 +23,7 @@ proto.current = function() {
 }
 
 proto.push = function(block) {
-  this._current = new Scope(this._builtins, this._current, block.type)
+  this._current = this._makeScope(block.type, this._current || null)
 }
 
 proto.set = function(scope) {

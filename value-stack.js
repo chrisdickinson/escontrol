@@ -4,33 +4,28 @@ var hidden = require('./lib/values/hidden-class.js')
 var ObjectValue = require('./lib/values/object.js')
 var Value = require('./lib/values/value.js')
 
-function ValueStack(builtins, onvalue, onpopvalue) {
+function ValueStack(cfg) {
   if (!(this instanceof ValueStack)) {
-    return new ValueStack(builtins, onvalue, onpopvalue)
+    return new ValueStack(cfg)
   }
 
   this._values = []
   this._fence = {at: -1}
   this._fence.prev = this._fence
-  this._builtins = builtins
-  this._onvalue = onvalue || noop
-  this._onpopvalue = onpopvalue || noop
+  this._cfg = cfg
 }
 
 var cons = ValueStack
 var proto = cons.prototype
 
-function noop() {
-}
-
 proto.push = function (value) {
   this._values.push(value)
-  this._onvalue(value)
+  this._cfg.onvalue(value)
 }
 
 proto.pushHole = function() {
   this._values.push(null)
-  this._onvalue(null)
+  this._cfg.onvalue(null)
 }
 
 proto.pop = function () {
@@ -39,7 +34,7 @@ proto.pop = function () {
   }
 
   var output = this._values.pop()
-  this._onpopvalue(output)
+  this._cfg.onpopvalue(output)
   return output
 }
 
@@ -57,10 +52,7 @@ proto.unfence = function() {
 }
 
 proto.toArray = function(len) {
-  var objectValue = this._builtins.getprop('[[ArrayConstructor]]').value().makeNew()
-
-  objectValue.newprop('length').assign(new Value(this._builtins, 'number', len))
-  objectValue._static = true
+  var objectValue = this._cfg.makeArray(len)
 
   if (len) {
     var values = this._values.slice(-len)
@@ -83,7 +75,7 @@ proto.toArray = function(len) {
 }
 
 proto.toObject = function(len) {
-  var objectValue = new ObjectValue(this._builtins, hidden.initial.EMPTY, this._builtins.newprop('[[ObjectProto]]').value())
+  var objectValue = this._cfg.makeObject()
 
   if (len) {
     var values = len ? this._values.slice(len * -2) : []

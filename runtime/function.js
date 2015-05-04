@@ -1,12 +1,6 @@
 module.exports = makeFunction
 module.exports.callImpl = CallFunctionImpl
 
-var SharedFunctionInfo = require('../lib/values/shared-function-info.js')
-var FunctionValue = require('../lib/values/function.js')
-var hidden = require('../lib/values/hidden-class.js')
-var ObjectValue = require('../lib/values/object.js')
-var Unknown = require('../lib/values/unknown.js')
-
 function makeFunction(builtins, globals, quickFn) {
   var functionProto = builtins.getprop('[[FunctionProto]]').value()
   var functionCons = quickFn('Function', FunctionImpl, globals)
@@ -42,7 +36,7 @@ function CallFunctionImpl(cfg, thisValue, args, isNew, shouldBranch) {
   if (!realFunction.isUnknown() && realFunction.isFunction() && !recurses) {
     realFunction.call(cfg, realThis, args, false, shouldBranch)
   } else {
-    cfg._valueStack.push(new Unknown(cfg._builtins))
+    cfg._valueStack.push(cfg.makeUnknown())
   }
 }
 
@@ -88,24 +82,12 @@ function ApplyFunctionImpl(cfg, thisValue, args, isNew, shouldBranch) {
     }
     realFunction.call(cfg, realThis, newArgs, false, shouldBranch)
   } else {
-    cfg._valueStack.push(new Unknown(cfg._builtins))
+    cfg._valueStack.push(cfg.makeUnknown())
   }
 }
 
 function FunctionImpl(cfg, thisValue, args, isNew) {
-  var ast = {"type":"FunctionDeclaration","id":{"type":"Identifier","name":"toString"},"params":[],"defaults":[],"body":{"type":"BlockStatement","body":[{"type":"ReturnStatement","argument":null}]},"rest":null,"generator":false,"expression":false}
-
-  var sfi = new SharedFunctionInfo(ast)
   cfg._valueStack.push(
-    new FunctionValue(
-      cfg._builtins,
-      ast,
-      cfg._builtins.getprop('[[FunctionProto]]').value(),
-      '(dynamic function)',
-      new ObjectValue(cfg._builtins, hidden.initial.EXPANDO, null),
-      sfi,
-      null,
-      true
-    )
+    cfg.makeFunction(null, null, cfg._builtins.getprop('[[FunctionProto]]').value())
   )
 }

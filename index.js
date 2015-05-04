@@ -12,6 +12,7 @@ var createScopeStack = require('./scope-stack.js')
 var createCallStack = require('./call-stack.js')
 var Unknown = require('./lib/values/unknown.js')
 var makeRuntime = require('./runtime/index.js')
+var makeNull = require('./lib/values/null.js')
 var Scope = require('./lib/values/scope.js')
 var Value = require('./lib/values/value.js')
 var makeBuiltins = require('./builtins.js')
@@ -40,10 +41,10 @@ function CFGFactory(node, opts) {
   this._lastNode = null
   this._builtins = opts.builtins || makeBuiltins()
   this._global = new Name('[[Global]]')
-  this._global.assign(opts.global || new Scope(this._builtins, null, 'Program'))
+  this._global.assign(opts.global || this.makeScope('Program', null))
   this._valueStack = createValueStack(this._builtins, opts.onvalue, opts.onpopvalue)
   if (!opts.global) makeRuntime(this._builtins, this._global.value())
-  this._scopeStack = createScopeStack(this._global.value(), this._builtins)
+  this._scopeStack = createScopeStack(this.makeScope.bind(this), this._global.value())
   this._callStack = createCallStack()
   this._connectionKind = []
   this._edges = []
@@ -455,20 +456,23 @@ proto.makeObject = function(hci, proto) {
   )
 }
 
-proto.makeFunction = function(callFn, instantiateFn, prototype) {
-  var sfi = new SharedFunctionInfo({type: 'BlockStatement', body: []})
+proto.makeFunction = function(callFn, instantiateFn, prototype, node, scope) {
+  node = node || {type: 'FunctionExpression', phony: true, body: {type: 'BlockStatement', body: []}, params: []}
+  var sfi = this._getSharedFunctionInfo(node)
   var value = new FunctionValue(
     this._builtins,
-    {},
+    node || {},
     prototype || this.makeObject(),
-    callFn.name ? callFn.name : instantiateFn ? instantiateFn.name : '<anon>',
-    this.global(),
+    node && node.id && node.id.name ? node.id.name :
+    callFn && callFn.name ? callFn.name :
+    instantiateFn && instantiateFn.name ? instantiateFn.name : '<anon>',
+    scope || this.global(),
     sfi,
     null,
-    true
+    null
   )
-  value.call = callFn
-  value.instantiateFn = instantiateFn || callFn
+  if (callFn) value.call = callFn
+  if (instantiateFn || callFn) value.instantiateFn = instantiateFn || callFn
   return value
 }
 
@@ -482,6 +486,21 @@ proto.makeUnknown = function() {
 
 proto.makeUndefined = function() {
   return makeUndefined()
+}
+
+proto.makeNull = function() {
+  return makeNull()
+}
+
+proto.makeRegExp = function(src, flags) {
+  return this.makeObject(
+    hidden.initial.REGEXP,
+    this._builtins.getprop('[[RegExpProto]]').value()
+  )
+}
+
+proto.makeScope = function(name, parent) {
+  return new Scope(this._builtins, parent, name)
 }
 
 function Frame(fn, context, isLValue, isCallee, block) {
