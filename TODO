@@ -1,4 +1,4 @@
 * break label / continue label / throw / return all need to be aware of finalizer blocks
-* fork / join for names
-* call-stack
 * collapse Either values in case of "has to be one of these two things"
+* move edges to vertices + edges
+* track all instantiations?

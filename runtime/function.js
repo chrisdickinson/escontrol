@@ -1,8 +1,8 @@
 module.exports = makeFunction
 module.exports.callImpl = CallFunctionImpl
 
-function makeFunction(builtins, globals, quickFn) {
-  var functionProto = builtins.getprop('[[FunctionProto]]').value()
+function makeFunction(cfg, globals, quickFn) {
+  var functionProto = cfg._builtins.getprop('[[FunctionProto]]').value()
   var functionCons = quickFn('Function', FunctionImpl, globals)
 
   functionCons.getprop('prototype').assign(functionProto)

@@ -9,8 +9,8 @@ var Either = require('../lib/values/either.js')
 var Null = require('../lib/values/null.js')
 var CallImpl = require('./function.js').callImpl
 
-function makeString(builtins, globals, quickFn) {
-  var stringProto = builtins.getprop('[[StringProto]]').value()
+function makeString(cfg, globals, quickFn) {
+  var stringProto = cfg._builtins.getprop('[[StringProto]]').value()
   var stringCons = quickFn('String', StringImpl, globals, hidden.initial.STRING)
 
   stringCons.getprop('prototype').assign(stringProto)
@@ -117,7 +117,7 @@ function ReturnArrayOrNull(cfg, thisValue, args, isNew) {
   value.newprop('index').assign(cfg.makeValue('number'))
   value.newprop('input').assign(cfg.makeValue('string'))
 
-  var values = Either.from([value, new Null(cfg._builtins)])
+  var values = Either.from([value, cfg.makeNull()])
   cfg._valueStack.push(values)
 }
 

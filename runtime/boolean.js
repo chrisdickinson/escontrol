@@ -4,8 +4,8 @@ var SharedFunctionInfo = require('../lib/values/shared-function-info.js')
 var hidden = require('../lib/values/hidden-class.js')
 var ObjectValue = require('../lib/values/object.js')
 
-function makeBoolean(builtins, globals, quickFn) {
-  var booleanProto = builtins.getprop('[[BooleanProto]]').value()
+function makeBoolean(cfg, globals, quickFn) {
+  var booleanProto = cfg._builtins.getprop('[[BooleanProto]]').value()
   var booleanCons = quickFn('Boolean', BooleanImpl, globals, hidden.initial.BOOLEAN)
 
   booleanCons.getprop('prototype').assign(booleanProto)

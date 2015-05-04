@@ -19,19 +19,20 @@ var builtinArray = require('./array.js')
 var builtinMath = require('./math.js')
 var builtinDate = require('./date.js')
 
-function makeRuntime(builtins, globals) {
-  var functionProto = builtins.getprop('[[FunctionProto]]').value()
+function makeRuntime(cfg, globals) {
+  var functionProto = cfg._builtins.getprop('[[FunctionProto]]').value()
+  var builtins = cfg._builtins
 
-  builtinFunction(builtins, globals, quickfn)
-  builtinBoolean(builtins, globals, quickfn)
-  builtinObject(builtins, globals, quickfn)
-  builtinNumber(builtins, globals, quickfn)
-  builtinRegExp(builtins, globals, quickfn)
-  builtinString(builtins, globals, quickfn)
-  builtinSymbol(builtins, globals, quickfn)
-  builtinError(builtins, globals, quickfn)
-  builtinArray(builtins, globals, quickfn)
-  builtinMath(builtins, globals, quickfn)
+  builtinFunction(cfg, globals, quickfn)
+  builtinBoolean(cfg, globals, quickfn)
+  builtinObject(cfg, globals, quickfn)
+  builtinNumber(cfg, globals, quickfn)
+  builtinRegExp(cfg, globals, quickfn)
+  builtinString(cfg, globals, quickfn)
+  builtinSymbol(cfg, globals, quickfn)
+  builtinError(cfg, globals, quickfn)
+  builtinArray(cfg, globals, quickfn)
+  builtinMath(cfg, globals, quickfn)
 
   var xs = 
 [ 'encodeURIComponent',
@@ -57,7 +58,7 @@ function makeRuntime(builtins, globals) {
 
   function quickfn(name, impl, into, instanceHCID) {
     var fn = new FunctionValue(
-      builtins,
+      cfg,
       {},
       functionProto,
       name,

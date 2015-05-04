@@ -34,16 +34,18 @@ function CFGFactory(node, opts) {
   this.oncalled = opts.oncalled || noop
   this.onoperation = opts.onoperation || noop
   this.onfunction = opts.onfunction || noop
+  this.onvalue = opts.onvalue || noop
+  this.onpopvalue = opts.onpopvalue || noop
   this.onload = opts.onload || noop
   this._visit = opts.onvisit ? this._listenvisit : this._basevisit
   this._stack = []
   this._graphs = []
   this._lastNode = null
-  this._builtins = opts.builtins || makeBuiltins()
+  this._builtins = opts.builtins || makeBuiltins(this)
   this._global = new Name('[[Global]]')
   this._global.assign(opts.global || this.makeScope('Program', null))
-  this._valueStack = createValueStack(this._builtins, opts.onvalue, opts.onpopvalue)
-  if (!opts.global) makeRuntime(this._builtins, this._global.value())
+  this._valueStack = createValueStack(this)
+  if (!opts.global) makeRuntime(this, this._global.value())
   this._scopeStack = createScopeStack(this.makeScope.bind(this), this._global.value())
   this._callStack = createCallStack()
   this._connectionKind = []
@@ -448,7 +450,7 @@ proto.toDot = function() {
 
 proto.makeObject = function(hci, proto) {
   return new ObjectValue(
-    this._builtins,
+    this,
     hci || hidden.initial.EMPTY,
     typeof proto === 'string' ? this._builtins.getprop(proto).value() :
     typeof proto === 'object' ? proto :
@@ -456,11 +458,17 @@ proto.makeObject = function(hci, proto) {
   )
 }
 
+proto.makeArray = function(size) {
+  var arr = this._builtins.getprop('[[ArrayConstructor]]').value().makeNew()
+  arr.newprop('length').assign(this.makeValue('number', size))
+  return arr
+}
+
 proto.makeFunction = function(callFn, instantiateFn, prototype, node, scope) {
   node = node || {type: 'FunctionExpression', phony: true, body: {type: 'BlockStatement', body: []}, params: []}
   var sfi = this._getSharedFunctionInfo(node)
   var value = new FunctionValue(
-    this._builtins,
+    this,
     node || {},
     prototype || this.makeObject(),
     node && node.id && node.id.name ? node.id.name :
@@ -477,7 +485,7 @@ proto.makeFunction = function(callFn, instantiateFn, prototype, node, scope) {
 }
 
 proto.makeValue = function(kind, value) {
-  return new Value(this._builtins, kind, value)
+  return new Value(this, kind, value)
 }
 
 proto.makeUnknown = function() {
