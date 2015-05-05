@@ -8,7 +8,7 @@ var Unknown = require('./lib/values/unknown.js')
 var Value = require('./lib/values/value.js')
 
 function makeBuiltins(cfg) {
-  var root = new ObjectValue(null, hidden.initial.SCOPE, null)
+  var root = new ObjectValue(cfg, hidden.initial.SCOPE, null)
 
   var objectProto = new ObjectValue(cfg, hidden.initial.EMPTY, null)
   var arrayProto = new ObjectValue(cfg, hidden.initial.EMPTY, objectProto)

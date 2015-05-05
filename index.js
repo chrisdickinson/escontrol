@@ -37,6 +37,7 @@ function CFGFactory(node, opts) {
   this.onfunction = opts.onfunction || noop
   this.onpushvalue = opts.onpushvalue || noop
   this.onpopvalue = opts.onpopvalue || noop
+  this.onvalue = opts.onvalue || noop
   this.onload = opts.onload || noop
   this._visit = opts.onvisit ? this._listenvisit : this._basevisit
   this._stack = []
@@ -494,11 +495,11 @@ proto.makeUnknown = function() {
 }
 
 proto.makeUndefined = function() {
-  return makeUndefined()
+  return makeUndefined(this)
 }
 
 proto.makeNull = function() {
-  return makeNull()
+  return makeNull(this)
 }
 
 proto.makeRegExp = function(src, flags) {
