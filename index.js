@@ -489,7 +489,7 @@ proto.makeValue = function(kind, value) {
 }
 
 proto.makeUnknown = function() {
-  return new Unknown(this._builtins)
+  return new Unknown(this)
 }
 
 proto.makeUndefined = function() {
@@ -508,7 +508,7 @@ proto.makeRegExp = function(src, flags) {
 }
 
 proto.makeScope = function(name, parent) {
-  return new Scope(this._builtins, parent, name)
+  return new Scope(this, parent, name)
 }
 
 function Frame(fn, context, isLValue, isCallee, block) {
