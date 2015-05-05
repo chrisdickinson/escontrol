@@ -38,13 +38,15 @@ function CFGFactory(node, opts) {
   this.onpushvalue = opts.onpushvalue || noop
   this.onpopvalue = opts.onpopvalue || noop
   this.onvalue = opts.onvalue || noop
+  this.onlink = opts.onlink || noop
+  this.onunlink = opts.onunlink || noop
   this.onload = opts.onload || noop
   this._visit = opts.onvisit ? this._listenvisit : this._basevisit
   this._stack = []
   this._graphs = []
   this._lastNode = null
   this._builtins = opts.builtins || makeBuiltins(this)
-  this._global = new Name('[[Global]]', this)
+  this._global = new Name('[[Global]]', null, this)
   this._global.assign(opts.global || this.makeScope('Program', null))
   this._valueStack = createValueStack(this)
   if (!opts.global) makeRuntime(this, this._global.value())
