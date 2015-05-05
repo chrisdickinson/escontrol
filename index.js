@@ -513,7 +513,7 @@ proto.makeScope = function(name, parent) {
 }
 
 proto.makeMembrane = function(parent) {
-  return new Membrane(parent)
+  return new Membrane(this, parent)
 }
 
 function Frame(fn, context, isLValue, isCallee, block) {
