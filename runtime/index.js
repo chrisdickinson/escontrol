@@ -46,7 +46,7 @@ function makeRuntime(cfg, globals) {
   'encodeURI' ]
 
   var JSON = new ObjectValue(
-      builtins,
+      cfg,
       hidden.initial.EMPTY,
       builtins.getprop('[[ObjectProto]]').value()
   )
