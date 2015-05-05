@@ -44,7 +44,7 @@ function CFGFactory(node, opts) {
   this._graphs = []
   this._lastNode = null
   this._builtins = opts.builtins || makeBuiltins(this)
-  this._global = new Name('[[Global]]')
+  this._global = new Name('[[Global]]', this)
   this._global.assign(opts.global || this.makeScope('Program', null))
   this._valueStack = createValueStack(this)
   if (!opts.global) makeRuntime(this, this._global.value())
