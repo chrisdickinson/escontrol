@@ -117,7 +117,7 @@ function ReturnArrayOrNull(cfg, thisValue, args, isNew) {
   value.newprop('index').assign(cfg.makeValue('number'))
   value.newprop('input').assign(cfg.makeValue('string'))
 
-  var values = Either.from([value, cfg.makeNull()])
+  var values = Either.from(cfg, [value, cfg.makeNull()])
   cfg._valueStack.push(values)
 }
 
