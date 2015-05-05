@@ -9,6 +9,7 @@ var hidden = require('./lib/values/hidden-class.js')
 var ObjectValue = require('./lib/values/object.js')
 var createValueStack = require('./value-stack.js')
 var createScopeStack = require('./scope-stack.js')
+var Membrane = require('./lib/values/membrane.js')
 var createCallStack = require('./call-stack.js')
 var Unknown = require('./lib/values/unknown.js')
 var makeRuntime = require('./runtime/index.js')
@@ -46,7 +47,7 @@ function CFGFactory(node, opts) {
   this._global.assign(opts.global || this.makeScope('Program', null))
   this._valueStack = createValueStack(this)
   if (!opts.global) makeRuntime(this, this._global.value())
-  this._scopeStack = createScopeStack(this.makeScope.bind(this), this._global.value())
+  this._scopeStack = createScopeStack(this, this._global.value())
   this._callStack = createCallStack()
   this._connectionKind = []
   this._edges = []
@@ -509,6 +510,10 @@ proto.makeRegExp = function(src, flags) {
 
 proto.makeScope = function(name, parent) {
   return new Scope(this, parent, name)
+}
+
+proto.makeMembrane = function(parent) {
+  return new Membrane(parent)
 }
 
 function Frame(fn, context, isLValue, isCallee, block) {
