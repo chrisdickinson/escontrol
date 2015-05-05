@@ -20,12 +20,12 @@ var proto = cons.prototype
 
 proto.push = function (value) {
   this._values.push(value)
-  this._cfg.onvalue(value)
+  this._cfg.onpushvalue(value)
 }
 
 proto.pushHole = function() {
   this._values.push(null)
-  this._cfg.onvalue(null)
+  this._cfg.onpushvalue(null)
 }
 
 proto.pop = function () {

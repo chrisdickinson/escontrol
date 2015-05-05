@@ -35,7 +35,7 @@ function CFGFactory(node, opts) {
   this.oncalled = opts.oncalled || noop
   this.onoperation = opts.onoperation || noop
   this.onfunction = opts.onfunction || noop
-  this.onvalue = opts.onvalue || noop
+  this.onpushvalue = opts.onpushvalue || noop
   this.onpopvalue = opts.onpopvalue || noop
   this.onload = opts.onload || noop
   this._visit = opts.onvisit ? this._listenvisit : this._basevisit
