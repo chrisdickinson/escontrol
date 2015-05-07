@@ -57,6 +57,13 @@ proto.toArray = function(len) {
   if (len) {
     var values = this._values.slice(-len)
     this._values.length -= len
+    for (var i = values.length - 1; i > -1; --i) {
+      this._cfg.onpopvalue(values[i])
+    }
+
+    if (values.length < len) {
+      throw new Error('not enough values')
+    }
 
     if (this._values.length < this._fence.at) {
       throw new Error('crossed fence!')
@@ -71,7 +78,7 @@ proto.toArray = function(len) {
     }
   }
 
-  this._values.push(objectValue)
+  this.push(objectValue)
 }
 
 proto.toObject = function(len) {
@@ -79,6 +86,9 @@ proto.toObject = function(len) {
 
   if (len) {
     var values = len ? this._values.slice(len * -2) : []
+    for (var i = values.length - 1; i > -1; --i) {
+      this._cfg.onpopvalue(values[i])
+    }
     this._values.length -= len * 2
 
     if (this._values.length < this._fence.at) {
@@ -90,5 +100,5 @@ proto.toObject = function(len) {
     }
   }
 
-  this._values.push(objectValue)
+  this.push(objectValue)
 }
