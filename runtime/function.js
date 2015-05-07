@@ -88,6 +88,6 @@ function ApplyFunctionImpl(cfg, thisValue, args, isNew, shouldBranch) {
 
 function FunctionImpl(cfg, thisValue, args, isNew) {
   cfg._valueStack.push(
-    cfg.makeFunction(null, null, cfg._builtins.getprop('[[FunctionProto]]').value())
+    cfg.makeFunction(null, null, null)
   )
 }
