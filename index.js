@@ -97,6 +97,14 @@ proto.stackInfo = function() {
   }).join('/')
 }
 
+proto.setBreakpoint = function() {
+  this._stack[this._stack.length - 1].isBreakpoint = true
+}
+
+proto.unsetBreakpoint = function() {
+  this._stack[this._stack.length - 1].isBreakpoint = false
+}
+
 proto.getExceptionDestination = function() {
   var frame = this._callStack.current()
   while (frame) {
@@ -119,6 +127,9 @@ proto.getExceptionDestination = function() {
 proto.advance = function cfg_next() {
   Operation.id = this.operationId
   if (this._stack.length) {
+    if (this._stack[this._stack.length - 1].isBreakpoint) {
+      return null
+    }
     var frame = this._stack.pop()
     frame.fn.call(this, frame.context)
     this.operationId = Operation.id
@@ -525,6 +536,7 @@ function Frame(fn, context, isLValue, isCallee, block) {
   this.isCallee = isCallee
   this.context = context
   this.isLValue = isLValue
+  this.isBreakpoint = false
 }
 
 require('./lib/visit-expr-array.js')(proto)
