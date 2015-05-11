@@ -83,6 +83,7 @@ proto.toArray = function(len) {
 
 proto.toObject = function(len) {
   var objectValue = this._cfg.makeObject()
+  var keys = []
 
   if (len) {
     var values = len ? this._values.slice(len * -2) : []
@@ -96,9 +97,11 @@ proto.toObject = function(len) {
     }
 
     for (var i = 0, len = values.length; i < len; i += 2) {
+      keys.push(values[i])
       objectValue.newprop(values[i]).assign(values[i + 1])
     }
   }
 
   this.push(objectValue)
+  return keys
 }
