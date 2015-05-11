@@ -72,6 +72,7 @@ Operation.kind = {
   DECR: _++,
   DELETE: _++,
   DIV: _++,
+  ENUMERATE: _++,
   EQ: _++,
   GEQ: _++,
   GT: _++,
@@ -155,6 +156,7 @@ Operation.mneumonic[Operation.kind.CREATE_FUNCTION] = 'CREATE_FUNCTION'
 Operation.mneumonic[Operation.kind.DECR] = 'DECR'
 Operation.mneumonic[Operation.kind.DELETE] = 'DELETE'
 Operation.mneumonic[Operation.kind.DIV] = 'DIV'
+Operation.mneumonic[Operation.kind.ENUMERATE] = 'ENUMERATE'
 Operation.mneumonic[Operation.kind.EQ] = 'EQ'
 Operation.mneumonic[Operation.kind.GEQ] = 'GEQ'
 Operation.mneumonic[Operation.kind.GT] = 'GT'
