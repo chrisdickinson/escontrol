@@ -285,11 +285,11 @@ proto._createArrayNode = function(len) {
 }
 
 proto._createObjectNode = function(len) {
-  this._valueStack.toObject(len)
+  const keys = this._valueStack.toObject(len)
   return new Operation(
     Operation.kind.LOAD_LITERAL_OBJECT,
     len,
-    null,
+    keys,
     null
   )
 }
