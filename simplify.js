@@ -57,7 +57,7 @@ function simplify(edges) {
   for (const group of simplified.vertices) {
     const incomingEdges = simplified.incoming.get(group) || φ
     const outgoingEdges = simplified.outgoing.get(group) || φ
-    const block         = new Block(group)
+    const block         = new Block(group, incomingEdges, outgoingEdges)
 
     mapped.set(group, block)
     for (const edge of incomingEdges) {
@@ -87,9 +87,11 @@ function simplify(edges) {
   return edges
 }
 
-function Block(ops) {
+function Block(ops, incoming, outgoing) {
   this._name = 'B' + (++Block.id)
   this._operations = ops || []
+  this.incoming = incoming
+  this.outgoing = outgoing
 }
 
 Block.id = 0
