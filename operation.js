@@ -68,9 +68,15 @@ Operation.kind = {
   BOR: _++,
   BXOR: _++,
   CALL: _++,
+  CONTEXT_DEFINE: _++,
+  CONTEXT_PUSH: _++,
+  CONTEXT_POP: _++,
+  CONTEXT_RESET: _++,
+  CONTEXT_SET: _++,
   CREATE_FUNCTION: _++,
   DECR: _++,
   DELETE: _++,
+  DEREF: _++,
   DIV: _++,
   ENUMERATE: _++,
   EQ: _++,
@@ -137,7 +143,6 @@ Operation.kind = {
   MATH_MAX: _++,
   MATH_MIN: _++, 
 
-
   // fake ops:
   ENTER: _++,
   EXIT: _++,
@@ -152,9 +157,15 @@ Operation.mneumonic[Operation.kind.BINV] = 'BINV'
 Operation.mneumonic[Operation.kind.BOR] = 'BOR'
 Operation.mneumonic[Operation.kind.BXOR] = 'BXOR'
 Operation.mneumonic[Operation.kind.CALL] = 'CALL'
+Operation.mneumonic[Operation.kind.CONTEXT_DEFINE] = 'CONTEXT_DEFINE'
+Operation.mneumonic[Operation.kind.CONTEXT_PUSH] = 'CONTEXT_PUSH'
+Operation.mneumonic[Operation.kind.CONTEXT_POP] = 'CONTEXT_POP'
+Operation.mneumonic[Operation.kind.CONTEXT_RESET] = 'CONTEXT_RESET'
+Operation.mneumonic[Operation.kind.CONTEXT_SET] = 'CONTEXT_SET'
 Operation.mneumonic[Operation.kind.CREATE_FUNCTION] = 'CREATE_FUNCTION'
 Operation.mneumonic[Operation.kind.DECR] = 'DECR'
 Operation.mneumonic[Operation.kind.DELETE] = 'DELETE'
+Operation.mneumonic[Operation.kind.DEREF] = 'DEREF'
 Operation.mneumonic[Operation.kind.DIV] = 'DIV'
 Operation.mneumonic[Operation.kind.ENUMERATE] = 'ENUMERATE'
 Operation.mneumonic[Operation.kind.EQ] = 'EQ'
