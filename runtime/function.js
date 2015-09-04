@@ -66,7 +66,7 @@ function ApplyFunctionImpl(cfg, thisValue, args, isNew, shouldBranch) {
   if (!realFunction.isUnknown() && realFunction.isFunction() && !recurses) {
     var len = 0
     if (args[0]) {
-      var lenProp = args[0].getprop('length')
+      var lenProp = args[0].isUndefined() ? 0 : args[0].getprop('length')
       if (lenProp) {
         len = lenProp.value()._value || 0
       }
