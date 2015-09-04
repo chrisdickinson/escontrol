@@ -13,6 +13,7 @@ var Membrane = require('./lib/values/membrane.js')
 var createCallStack = require('./call-stack.js')
 var Unknown = require('./lib/values/unknown.js')
 var makeRuntime = require('./runtime/index.js')
+var Either = require('./lib/values/either.js')
 var makeNull = require('./lib/values/null.js')
 var Scope = require('./lib/values/scope.js')
 var Value = require('./lib/values/value.js')
@@ -77,6 +78,12 @@ proto.builtins = function() {
   return this._builtins
 }
 
+proto.resetScope = function(scope) {
+  var scope = this._scopeStack.current()
+  this._scopeStack.set(scope || this._scopeStack.root())
+  return scope
+}
+
 proto._isStrict = function() {
   var frame = this._callStack.current()
   var func = frame.getFunction()
@@ -124,6 +131,12 @@ proto.getExceptionDestination = function() {
   return null
 }
 
+proto.insertFrame = function (frameFn, context) {
+  return this._pushFrame(function (ctxt) {
+    return Boolean(frameFn(ctxt))
+  }, context)
+}
+
 proto.advance = function cfg_next() {
   Operation.id = this.operationId
   if (this._stack.length) {
@@ -131,7 +144,10 @@ proto.advance = function cfg_next() {
       return null
     }
     var frame = this._stack.pop()
-    frame.fn.call(this, frame.context)
+    if (frame.fn.call(this, frame.context) === false) {
+      this.operationId = Operation.id
+      return false
+    }
     this.operationId = Operation.id
     return this._stack.length
   }
@@ -528,6 +544,10 @@ proto.makeScope = function(name, parent) {
 
 proto.makeMembrane = function(parent) {
   return new Membrane(this, parent)
+}
+
+proto.makeEither = function(arr) {
+  return Either.from(this, arr)
 }
 
 function Frame(fn, context, isLValue, isCallee, block) {
