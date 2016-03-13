@@ -10,6 +10,7 @@
     "nyc": "^6.0.0",
     "pad": "0.0.5",
     "pretty-bytes": "^1.0.1",
+    "standard": "^6.0.8",
     "tape": "^4.0.0"
   },
   "dependencies": {
@@ -18,7 +19,8 @@
     "simplify-dag": "^2.0.1"
   },
   "scripts": {
-    "test": "nyc tape test/*.js | faucet && nyc report"
+    "test": "nyc tape test/*.js | faucet && nyc report && npm run test:style",
+    "test:style": "standard"
   },
   "author": "Chris Dickinson <chris@neversaw.us> (http://neversaw.us/)",
   "license": "MIT"
