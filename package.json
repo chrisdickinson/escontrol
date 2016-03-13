@@ -7,6 +7,7 @@
     "espree": "^3.1.1",
     "esprima": "^1.2.2",
     "faucet": "0.0.1",
+    "nyc": "^6.0.0",
     "pad": "0.0.5",
     "pretty-bytes": "^1.0.1",
     "tape": "^4.0.0"
@@ -17,7 +18,7 @@
     "simplify-dag": "^2.0.1"
   },
   "scripts": {
-    "test": "tape test/*.js | faucet"
+    "test": "nyc tape test/*.js | faucet && nyc report"
   },
   "author": "Chris Dickinson <chris@neversaw.us> (http://neversaw.us/)",
   "license": "MIT"
