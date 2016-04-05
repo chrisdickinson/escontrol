@@ -1,11 +1,8 @@
 module.exports = makeMath
 
-var hidden = require('../lib/values/hidden-class.js')
-var ObjectValue = require('../lib/values/object.js')
-var Value = require('../lib/values/value.js')
 var Operation = require('../operation.js')
 
-function makeMath(cfg, globals, quickFn) {
+function makeMath (cfg, globals, quickFn) {
   var objectProto = cfg._builtins.getprop('[[ObjectProto]]').value()
   var MathObject = cfg.makeObject(null, objectProto)
   globals.newprop('Math').assign(MathObject)
@@ -19,7 +16,7 @@ function makeMath(cfg, globals, quickFn) {
     'SQRT1_2',
     'SQRT2'
   ]
-  numberProps.forEach(function(xs) {
+  numberProps.forEach(function (xs) {
     MathObject.newprop(xs).assign(cfg.makeValue('number'))
   })
 
@@ -41,20 +38,19 @@ function makeMath(cfg, globals, quickFn) {
     'atan2',
     'pow',
     'max',
-    'min' 
+    'min'
   ]
 
-  mathFunctions.forEach(function(xs) {
+  mathFunctions.forEach(function (xs) {
     quickFn(xs, MathFunctionImpl(xs), MathObject)
   })
 }
 
-function MathFunctionImpl(name) {
+function MathFunctionImpl (name) {
   return MathFunctionImpl
 
-  function MathFunctionImpl(cfg, thisValue, args, isNew) {
+  function MathFunctionImpl (cfg, thisValue, args, isNew) {
     cfg._connect(cfg.last(), new Operation(Operation.kind['MATH_' + name.toUpperCase()], args[0], args[1], args[2]))
     cfg._valueStack.push(cfg.makeValue('number'))
   }
 }
-

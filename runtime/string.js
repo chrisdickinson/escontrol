@@ -2,14 +2,11 @@
 
 module.exports = makeString
 
-var SharedFunctionInfo = require('../lib/values/shared-function-info.js')
 var hidden = require('../lib/values/hidden-class.js')
-var ObjectValue = require('../lib/values/object.js')
 var Either = require('../lib/values/either.js')
-var Null = require('../lib/values/null.js')
 var CallImpl = require('./function.js').callImpl
 
-function makeString(cfg, globals, quickFn) {
+function makeString (cfg, globals, quickFn) {
   var stringProto = cfg._builtins.getprop('[[StringProto]]').value()
   var stringCons = quickFn('String', StringImpl, globals, hidden.initial.STRING)
 
@@ -84,33 +81,33 @@ function makeString(cfg, globals, quickFn) {
   stringProto.newprop('constructor').assign(stringCons)
 }
 
-function StringImpl(cfg, thisValue, args, isNew) {
+function StringImpl (cfg, thisValue, args, isNew) {
   var out = isNew ? this.makeNew() : cfg.makeValue(
     'string'
   )
   cfg._valueStack.push(out)
 }
 
-function ReturnString(cfg, thisValue, args, isNew) {
+function ReturnString (cfg, thisValue, args, isNew) {
   cfg._valueStack.push(cfg.makeValue('string'))
 }
 
-function ReturnNumber(cfg, thisValue, args, isNew) {
+function ReturnNumber (cfg, thisValue, args, isNew) {
   cfg._valueStack.push(cfg.makeValue('number'))
 }
 
-function ReturnBoolean(cfg, thisValue, args, isNew) {
+function ReturnBoolean (cfg, thisValue, args, isNew) {
   cfg._valueStack.push(cfg.makeValue('boolean'))
 }
 
-function ReturnArray(cfg, thisValue, args, isNew) {
+function ReturnArray (cfg, thisValue, args, isNew) {
   var value = cfg._builtins.getprop('[[ArrayConstructor]]').value().makeNew()
   value.newprop('length').assign(cfg.makeValue('number'))
   value.newprop('0').assign(cfg.makeValue('string'))
   cfg._valueStack.push(value)
 }
 
-function ReturnArrayOrNull(cfg, thisValue, args, isNew) {
+function ReturnArrayOrNull (cfg, thisValue, args, isNew) {
   var value = cfg._builtins.getprop('[[ArrayConstructor]]').value().makeNew()
   value.newprop('length').assign(cfg.makeValue('number'))
   value.newprop('0').assign(cfg.makeValue('string'))
@@ -121,7 +118,7 @@ function ReturnArrayOrNull(cfg, thisValue, args, isNew) {
   cfg._valueStack.push(values)
 }
 
-function StringReplace(cfg, thisValue, args, isNew) {
+function StringReplace (cfg, thisValue, args, isNew) {
   if (args[1] && args[1].isFunction()) {
     cfg._pushFrame(afterStringReplaceCall)
     return CallImpl(cfg, args[1], [
@@ -134,7 +131,7 @@ function StringReplace(cfg, thisValue, args, isNew) {
   cfg._valueStack.push(cfg.makeValue('string'))
 }
 
-function afterStringReplaceCall() {
+function afterStringReplaceCall () {
   this._valueStack.pop()
   this._valueStack.push(this.makeValue('string'))
 }

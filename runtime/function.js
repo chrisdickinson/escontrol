@@ -1,7 +1,7 @@
 module.exports = makeFunction
 module.exports.callImpl = CallFunctionImpl
 
-function makeFunction(cfg, globals, quickFn) {
+function makeFunction (cfg, globals, quickFn) {
   var functionProto = cfg._builtins.getprop('[[FunctionProto]]').value()
   var functionCons = quickFn('Function', FunctionImpl, globals)
 
@@ -10,7 +10,7 @@ function makeFunction(cfg, globals, quickFn) {
   quickFn('apply', ApplyFunctionImpl, functionProto)
 }
 
-function CallFunctionImpl(cfg, thisValue, args, isNew, shouldBranch) {
+function CallFunctionImpl (cfg, thisValue, args, isNew, shouldBranch) {
   var realFunction = thisValue
   var realThis = args.shift()
 
@@ -40,7 +40,7 @@ function CallFunctionImpl(cfg, thisValue, args, isNew, shouldBranch) {
   }
 }
 
-function ApplyFunctionImpl(cfg, thisValue, args, isNew, shouldBranch) {
+function ApplyFunctionImpl (cfg, thisValue, args, isNew, shouldBranch) {
   var realFunction = thisValue
   var realThis = args.shift()
 
@@ -72,7 +72,7 @@ function ApplyFunctionImpl(cfg, thisValue, args, isNew, shouldBranch) {
       }
     }
     var newArgs = []
-    for(var i = 0; i < len; ++i) {
+    for (var i = 0; i < len; ++i) {
       var prop = args[0].getprop(i)
       if (!prop) {
         newArgs[i] = cfg.makeUndefined()
@@ -86,7 +86,7 @@ function ApplyFunctionImpl(cfg, thisValue, args, isNew, shouldBranch) {
   }
 }
 
-function FunctionImpl(cfg, thisValue, args, isNew) {
+function FunctionImpl (cfg, thisValue, args, isNew) {
   cfg._valueStack.push(
     cfg.makeFunction(null, null, null)
   )

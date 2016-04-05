@@ -3,17 +3,15 @@
 module.exports = makeSymbol
 
 var hidden = require('../lib/values/hidden-class.js')
-var ObjectValue = require('../lib/values/object.js')
-var Value = require('../lib/values/value.js')
 
-function makeSymbol(cfg, globals, quickFn) {
+function makeSymbol (cfg, globals, quickFn) {
   var symbolProto = cfg._builtins.getprop('[[SymbolProto]]').value()
   var symbolCons = quickFn('Symbol', SymbolProto, globals, hidden.initial.SYMBOL)
 
   symbolCons.getprop('prototype').assign(symbolProto)
 }
 
-function SymbolProto(cfg, thisValue, args, isNew) {
+function SymbolProto (cfg, thisValue, args, isNew) {
   if (isNew) {
     cfg._throwException('TypeError')
     return cfg._valueStack.push(cfg.makeUnknown())

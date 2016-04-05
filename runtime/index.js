@@ -3,9 +3,6 @@ module.exports = makeRuntime
 var FunctionValue = require('../lib/values/function.js')
 var hidden = require('../lib/values/hidden-class.js')
 var ObjectValue = require('../lib/values/object.js')
-var Unknown = require('../lib/values/unknown.js')
-var Value = require('../lib/values/value.js')
-var Operation = require('../operation.js')
 
 var builtinFunction = require('./function.js')
 var builtinBoolean = require('./boolean.js')
@@ -19,7 +16,7 @@ var builtinArray = require('./array.js')
 var builtinMath = require('./math.js')
 var builtinDate = require('./date.js')
 
-function makeRuntime(cfg, globals) {
+function makeRuntime (cfg, globals) {
   var functionProto = cfg._builtins.getprop('[[FunctionProto]]').value()
   var builtins = cfg._builtins
 
@@ -32,9 +29,11 @@ function makeRuntime(cfg, globals) {
   builtinSymbol(cfg, globals, quickfn)
   builtinError(cfg, globals, quickfn)
   builtinArray(cfg, globals, quickfn)
+  builtinDate(cfg, globals, quickfn)
   builtinMath(cfg, globals, quickfn)
 
-  var xs = 
+  /*
+  missing:
 [ 'encodeURIComponent',
   'decodeURIComponent',
   'Date',
@@ -44,11 +43,12 @@ function makeRuntime(cfg, globals) {
   'escape',
   'eval',
   'encodeURI' ]
+  */
 
   var JSON = new ObjectValue(
-      cfg,
-      hidden.initial.EMPTY,
-      builtins.getprop('[[ObjectProto]]').value()
+    cfg,
+    hidden.initial.EMPTY,
+    builtins.getprop('[[ObjectProto]]').value()
   )
   globals.newprop('JSON').assign(JSON)
   quickfn('parse', JSONParseImpl, JSON)
@@ -56,7 +56,7 @@ function makeRuntime(cfg, globals) {
 
   return
 
-  function quickfn(name, impl, into, instanceHCID) {
+  function quickfn (name, impl, into, instanceHCID) {
     var fn = new FunctionValue(
       cfg,
       {},
@@ -73,10 +73,10 @@ function makeRuntime(cfg, globals) {
   }
 }
 
-function JSONParseImpl(cfg, thisValue, args, isNew) {
+function JSONParseImpl (cfg, thisValue, args, isNew) {
   cfg._valueStack.push(cfg.makeObject())
 }
 
-function JSONStringifyImpl(cfg, thisValue, args, isNew) {
+function JSONStringifyImpl (cfg, thisValue, args, isNew) {
   cfg._valueStack.push(cfg.makeValue('string'))
 }
